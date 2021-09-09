@@ -33,6 +33,8 @@ public class DlgRectangle extends JDialog {
 	
 	private JButton btnEdgeColor = new JButton(" ");
 	private JButton btnInnerColor = new JButton(" ");
+	
+	
 	public DlgRectangle() {
 		setResizable(false);
 		setTitle("IT07-2017 Vojnovic Jelena");
