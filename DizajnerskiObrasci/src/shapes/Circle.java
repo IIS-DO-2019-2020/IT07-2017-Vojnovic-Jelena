@@ -94,17 +94,14 @@ public class Circle extends Shape {
 	public int getRadius() {
 		return radius;
 	}
-	public void setRadius(int radius) throws Exception {
-		if (radius >= 0) {
-			this.radius = radius;
-		} else {
-			throw new NumberFormatException("Radius has to be a value greater then 0!");
-		}
+	public void setRadius(int radius){
+		this.radius=radius;
 	}
 	
 	public String toString() {
 		return "Center=" + center + ", radius=" + radius; 
 	}
+
 
 
 	

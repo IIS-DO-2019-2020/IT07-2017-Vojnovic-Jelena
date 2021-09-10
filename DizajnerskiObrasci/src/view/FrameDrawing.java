@@ -50,6 +50,7 @@ public class FrameDrawing extends JFrame {
 	private JToggleButton btnShapeRectangle = new JToggleButton("Pravougaonik");
 	private JToggleButton btnShapeCircle = new JToggleButton("Krug");
 	private JToggleButton btnShapeDonut = new JToggleButton("Krofna");
+	private JToggleButton btnShapeHexagon = new JToggleButton("Heksagon");
 	private JButton btnColorEdge = new JButton("Boja linije");
 	private JButton btnColorInner = new JButton("Boja unutrasnjosti");
 	
@@ -106,7 +107,7 @@ public class FrameDrawing extends JFrame {
 	 * Create the frame.
 	 */
 	public FrameDrawing() {
-		setTitle("IT 38-2017 Maksimovic Milana");
+		setTitle("IT 07-2017 Vojnovic Jelena");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1100, 700);
 		setLocationRelativeTo(null);
@@ -196,6 +197,10 @@ public class FrameDrawing extends JFrame {
 		panel_4.add(btnShapeDonut);
 		
 		
+		btnShapeHexagon.setAlignmentX(Component.CENTER_ALIGNMENT);
+		btnsShapes.add(btnShapeHexagon);
+		panel_4.add(btnShapeHexagon);
+		
 		
 		
 		btnOperationDrawing.setSelected(true);
@@ -247,6 +252,7 @@ public class FrameDrawing extends JFrame {
 			btnShapeRectangle.setEnabled(true);
 			btnShapeCircle.setEnabled(true);
 			btnShapeDonut.setEnabled(true);
+			btnShapeHexagon.setEnabled(true);
 			
 			btnColorEdge.setEnabled(true);
 			btnColorInner.setEnabled(true);
@@ -263,6 +269,7 @@ public class FrameDrawing extends JFrame {
 			btnShapeRectangle.setEnabled(false);
 			btnShapeCircle.setEnabled(false);
 			btnShapeDonut.setEnabled(false);
+			btnShapeHexagon.setEnabled(false);
 			
 			btnColorEdge.setEnabled(false);
 			btnColorInner.setEnabled(false);
@@ -353,7 +360,9 @@ public class FrameDrawing extends JFrame {
 	public JToggleButton getBtnShapeDonut() {
 		return btnShapeDonut;
 	}
-
+	public JToggleButton getBtnShapeHexagon() {
+		return btnShapeHexagon;
+	}
 	public void setBtnShapeDonut(JToggleButton btnShapeDonut) {
 		this.btnShapeDonut = btnShapeDonut;
 	}

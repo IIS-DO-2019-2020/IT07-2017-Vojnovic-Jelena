@@ -8,8 +8,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import javax.swing.JOptionPane;
 
+import adapter.HexagonAdapter;
 import dialogs.DlgCircle;
 import dialogs.DlgDonut;
+import dialogs.DlgHexagon;
 import dialogs.DlgLine;
 import dialogs.DlgPoint;
 import dialogs.DlgRectangle;
@@ -122,9 +124,22 @@ public class DrawingController {
 					frame.getView().repaint();
 				return;
 				
-			}
+			} else if (frame.getBtnShapeHexagon().isSelected()) {
+				DlgHexagon dlgHexagon = new DlgHexagon();
+				dlgHexagon.setPoint(mouseClick);
+				dlgHexagon.setColors(frame.getBtnColorEdge().getBackground(), frame.getBtnColorInner().getBackground());
+				dlgHexagon.setVisible(true);
 				
+				if(dlgHexagon.getHexagon().isSelected()) 
+					frame.getBtnColorEdge().setBackground(dlgHexagon.getEdgeColor());
+					frame.getBtnColorInner().setBackground(dlgHexagon.getInnerColor());
+					model.addShape(dlgHexagon.getHexagon());
+					frame.getView().repaint();
+				return;
+					
+			}			
 	}
+	
 	 	public void OperationEdit(ActionEvent e) {
 	 		int index = model.getSelected();
 	 		if (index ==-1) return;
@@ -175,6 +190,15 @@ public class DrawingController {
 	 			
 	 			if(dlgCircle.getCircle() !=null) {
 	 				model.setShape(index, dlgCircle.getCircle());
+	 				frame.getView().repaint();
+	 			}
+	 		} else if (shape instanceof HexagonAdapter) {
+	 			DlgHexagon dlgHexagon = new DlgHexagon();
+	 			dlgHexagon.setHexagon((HexagonAdapter) shape);
+	 			dlgHexagon.setVisible(true);
+	 			
+	 			if(dlgHexagon.getHexagon() !=null) {
+	 				model.setShape(index, dlgHexagon.getHexagon());
 	 				frame.getView().repaint();
 	 			}
 	 		}
