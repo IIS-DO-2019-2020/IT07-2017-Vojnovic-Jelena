@@ -13,6 +13,8 @@ public class Application {
 		
 		frame.getView().setModel(model);
 		DrawingController controller = new DrawingController(model, frame);
+		controller.addObserver(frame);
+		
 		frame.setController(controller);
 		
 		frame.getBtnColorEdge().setBackground(controller.getEdgeColor());

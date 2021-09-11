@@ -128,7 +128,7 @@ public class DlgHexagon extends JDialog {
 								JOptionPane.showMessageDialog(null, "Uneli ste pogresne podatke!", "Greska!", JOptionPane.ERROR_MESSAGE);
 								return;
 							}
-							hexagon = new HexagonAdapter(new Point(newX, newY), newRadius, edgeColor, innerColor);
+							hexagon = new HexagonAdapter(new Point(newX, newY), newRadius, innerColor, edgeColor);
 							hexagon.setSelected(isSelected);
 							dispose();
 						} catch (Exception ex) {

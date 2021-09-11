@@ -22,13 +22,13 @@ public class HexagonAdapter extends Shape {
 	public HexagonAdapter (Hexagon hexagon, Color inner, Color edge) {
 		this.hexagon=hexagon;
 		this.hexagon.setAreaColor(inner);
-		this.hexagon.setAreaColor(edge);
+		this.hexagon.setBorderColor(edge);
 	}
 	
 	public HexagonAdapter (Point center, int radius, Color inner, Color edge) {
 		this(center, radius);
 		this.hexagon.setAreaColor(inner);
-		this.hexagon.setAreaColor(edge);
+		this.hexagon.setBorderColor(edge);
 	}
 	
 
@@ -74,11 +74,11 @@ public class HexagonAdapter extends Shape {
 	}
 	
 	public Color getEdgeColor () {
-		return this.hexagon.getAreaColor();
+		return this.hexagon.getBorderColor();
 	}
 	
 	public void setEdgeColor(Color edge) {
-		this.hexagon.setAreaColor(edge);
+		this.hexagon.setBorderColor(edge);
 	}
 	
 	public Hexagon getHexagon() {

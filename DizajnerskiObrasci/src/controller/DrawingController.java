@@ -6,6 +6,8 @@ import shapes.Rectangle;
 import shapes.Shape;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+
 import javax.swing.JOptionPane;
 
 import adapter.HexagonAdapter;
@@ -16,13 +18,15 @@ import dialogs.DlgLine;
 import dialogs.DlgPoint;
 import dialogs.DlgRectangle;
 import model.DrawingModel;
+import observer.Observer;
+import observer.Subject;
 import shapes.Circle;
 import shapes.Donut;
 import shapes.Line;
 import shapes.Point;
 import view.FrameDrawing;
 
-public class DrawingController {
+public class DrawingController implements Subject {
 	
 	private DrawingModel model;
 	private FrameDrawing frame;
@@ -32,8 +36,11 @@ public class DrawingController {
 	private Point lineFirstPoint;
 	private Color edgeColor, innerColor = Color.WHITE;
 	
+	private ArrayList<Observer> observers;
+	
 	public void setCurrState(int state) {
 		this.currState=state;
+		notifyObservers();
 	}
 	
 	public DrawingController(DrawingModel model, FrameDrawing frame) {
@@ -42,6 +49,8 @@ public class DrawingController {
 		
 		this.edgeColor=Color.BLACK;
 		this.innerColor=Color.WHITE;
+		
+		this.observers= new ArrayList<Observer>();
 	}
 	
 	public void OperationDrawing(MouseEvent e) {
@@ -56,6 +65,7 @@ public class DrawingController {
 					else {
 						shape.setSelected(true);
 					}
+					notifyObservers();
 				}
 			});
 			
@@ -124,20 +134,19 @@ public class DrawingController {
 					frame.getView().repaint();
 				return;
 				
-			} else if (frame.getBtnShapeHexagon().isSelected()) {
+			}  else if (frame.getBtnShapeHexagon().isSelected()) {
 				DlgHexagon dlgHexagon = new DlgHexagon();
 				dlgHexagon.setPoint(mouseClick);
 				dlgHexagon.setColors(frame.getBtnColorEdge().getBackground(), frame.getBtnColorInner().getBackground());
 				dlgHexagon.setVisible(true);
 				
-				if(dlgHexagon.getHexagon().isSelected()) 
+				if(dlgHexagon.getHexagon()!= null)
 					frame.getBtnColorEdge().setBackground(dlgHexagon.getEdgeColor());
-					frame.getBtnColorInner().setBackground(dlgHexagon.getInnerColor());
-					model.addShape(dlgHexagon.getHexagon());
-					frame.getView().repaint();
+				    frame.getBtnColorInner().setBackground(dlgHexagon.getInnerColor());
+				    model.addShape(dlgHexagon.getHexagon());
+				    frame.getView().repaint();
 				return;
-					
-			}			
+			}	
 	}
 	
 	 	public void OperationEdit(ActionEvent e) {
@@ -193,14 +202,14 @@ public class DrawingController {
 	 				frame.getView().repaint();
 	 			}
 	 		} else if (shape instanceof HexagonAdapter) {
-	 			DlgHexagon dlgHexagon = new DlgHexagon();
-	 			dlgHexagon.setHexagon((HexagonAdapter) shape);
-	 			dlgHexagon.setVisible(true);
-	 			
-	 			if(dlgHexagon.getHexagon() !=null) {
-	 				model.setShape(index, dlgHexagon.getHexagon());
-	 				frame.getView().repaint();
-	 			}
+				DlgHexagon dlgHexagon = new DlgHexagon();
+				dlgHexagon.setHexagon((HexagonAdapter) shape);
+				dlgHexagon.setVisible(true);
+				
+				if(dlgHexagon.getHexagon()!=null) {
+					model.setShape(index, dlgHexagon.getHexagon());
+					frame.getView().repaint();
+				}
 	 		}
 	 	}
 	 	
@@ -209,6 +218,11 @@ public class DrawingController {
 			if (JOptionPane.showConfirmDialog(null, "Da li zaista zelite da obrisete selektovane oblike?", "Potvrda", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == 0) model.removeSelected();
 			frame.getView().repaint();
 		}
+	 	
+	 	public int numOfSelectedShapes() {
+	 		int numOfSelectedShapes = model.getSelectedShapes().size();
+	 		return numOfSelectedShapes;
+	 	}
 		
 		public Color getEdgeColor() {
 			return edgeColor;
@@ -223,6 +237,26 @@ public class DrawingController {
 		
 		public void setInnerColor(Color innerColor) {
 			this.innerColor = innerColor;
+		}
+
+		@Override
+		public void addObserver(Observer observer) {
+			observers.add(observer);
+			
+		}
+
+		@Override
+		public void removeObserver(Observer observer) {
+			observers.remove(observer);
+			
+		}
+
+		@Override
+		public void notifyObservers() {
+			for(Observer observer: observers) {
+				observer.update(currState, numOfSelectedShapes(), model.getShapes().size());
+			}
+			
 		}
 		
 }

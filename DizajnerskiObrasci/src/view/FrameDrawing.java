@@ -24,9 +24,10 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.EmptyBorder;
 
 import controller.DrawingController;
+import observer.Observer;
 import shapes.Point;
 
-public class FrameDrawing extends JFrame {
+public class FrameDrawing extends JFrame implements Observer {
 	
 
 	private DrawingView view = new DrawingView();
@@ -239,8 +240,8 @@ public class FrameDrawing extends JFrame {
 		};
 	}
 	
-	
-	public void update(int currState) {
+	@Override
+	public void update(int currState, int numOfSelectedShapes, int numOfShapes) {
 
 		if(OPERATION_DRAWING == currState) {
 			
@@ -260,9 +261,17 @@ public class FrameDrawing extends JFrame {
 		
 		if(OPERATION_EDIT_DELETE == currState) {
 			
+			if(numOfSelectedShapes>1)
+			btnActionEdit.setEnabled(false);
 			
+			else if (numOfSelectedShapes==1)
 			btnActionEdit.setEnabled(true);
+			
+			else btnActionEdit.setEnabled(false);
+			
+			if(numOfSelectedShapes>=1)
 			btnActionDelete.setEnabled(true);
+			else btnActionDelete.setEnabled(false);
 			
 			btnShapePoint.setEnabled(false);
 			btnShapeLine.setEnabled(false);
@@ -418,5 +427,6 @@ public class FrameDrawing extends JFrame {
 	public void setView(DrawingView view) {
 		this.view = view;
 	}
+
 
 }
