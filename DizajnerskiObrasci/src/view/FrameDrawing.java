@@ -21,7 +21,9 @@ import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
 
 import controller.DrawingController;
 import observer.Observer;
@@ -46,6 +48,7 @@ public class FrameDrawing extends JFrame implements Observer {
 	private JToggleButton btnOperationEditOrDelete = new JToggleButton("Selektuj");
 	private JButton btnActionEdit = new JButton("Izmeni");
 	private JButton btnActionDelete = new JButton("Obrisi");
+	private JButton btnRedo = new JButton("Ponovi");
 	private JToggleButton btnShapePoint = new JToggleButton("Tacka");
 	private JToggleButton btnShapeLine = new JToggleButton("Linija");
 	private JToggleButton btnShapeRectangle = new JToggleButton("Pravougaonik");
@@ -131,9 +134,10 @@ public class FrameDrawing extends JFrame implements Observer {
 		panel_1.setLayout(new GridLayout(4, 0, 0, 0));
 		
 		JPanel panel_2 = new JPanel();
+		panel_2.setBorder(new TitledBorder(null, "Operacije", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		panel_1.add(panel_2);
-		panel_2.setLayout(new BoxLayout(panel_2, BoxLayout.Y_AXIS));
 		
+
 		btnOperationDrawing.setSelected(true);
 		
 		btnOperationDrawing.addActionListener(new ActionListener() {
@@ -141,26 +145,31 @@ public class FrameDrawing extends JFrame implements Observer {
 				controller.setCurrState(OPERATION_DRAWING);
 			}
 		});
+		
 		btnOperationDrawing.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnsOperation.add(btnOperationDrawing);
 		panel_2.add(btnOperationDrawing);
+		
 		
 		btnOperationEditOrDelete.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				controller.setCurrState(OPERATION_EDIT_DELETE);;
 			}
 		});
+		
 		btnOperationEditOrDelete.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnsOperation.add(btnOperationEditOrDelete);
 		panel_2.add(btnOperationEditOrDelete);
 		
 		JPanel panel_3 = new JPanel();
+		panel_3.setBorder(new TitledBorder(null, "Akcije", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		panel_1.add(panel_3);
 		
 		btnActionEdit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				controller.OperationEdit(e);			}
 		});
+		
 		btnActionEdit.setAlignmentX(Component.CENTER_ALIGNMENT);
 		panel_3.add(btnActionEdit);
 		
@@ -169,13 +178,21 @@ public class FrameDrawing extends JFrame implements Observer {
 				controller.OperationDelete(e);
 			}
 		});
-		btnActionDelete.setAlignmentX(Component.CENTER_ALIGNMENT);
-		panel_3.add(btnActionDelete);
 		
+		btnActionDelete.setAlignmentX(Component.CENTER_ALIGNMENT);
+		//panel_3.add(btnActionDelete);
+		
+		btnRedo.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controller.redoCommand();
+			}});
 		
 		JPanel panel_4 = new JPanel();
 		panel_1.add(panel_4);
 		panel_4.setLayout(new BoxLayout(panel_4, BoxLayout.Y_AXIS));
+		
 		
 		btnShapePoint.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnsShapes.add(btnShapePoint);
