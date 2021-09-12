@@ -49,6 +49,7 @@ public class FrameDrawing extends JFrame implements Observer {
 	private JButton btnActionEdit = new JButton("Izmeni");
 	private JButton btnActionDelete = new JButton("Obrisi");
 	private JButton btnRedo = new JButton("Ponovi");
+	private JButton btnUndo = new JButton("Ponisti");
 	private JToggleButton btnShapePoint = new JToggleButton("Tacka");
 	private JToggleButton btnShapeLine = new JToggleButton("Linija");
 	private JToggleButton btnShapeRectangle = new JToggleButton("Pravougaonik");
@@ -189,6 +190,13 @@ public class FrameDrawing extends JFrame implements Observer {
 				controller.redoCommand();
 			}});
 		
+		btnUndo.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controller.undoCommand();			
+			}});
+		
 		JPanel panel_4 = new JPanel();
 		panel_1.add(panel_4);
 		panel_4.setLayout(new BoxLayout(panel_4, BoxLayout.Y_AXIS));
@@ -258,7 +266,16 @@ public class FrameDrawing extends JFrame implements Observer {
 	}
 	
 	@Override
-	public void update(int currState, int numOfSelectedShapes, int numOfShapes) {
+	public void update(int currState, int numOfSelectedShapes, int numOfShapes, int numOfUnexecutedCmd, int numOfExecutedCmd) {
+		
+		if(numOfUnexecutedCmd ==0) 
+			btnRedo.setEnabled(false);
+		else btnRedo.setEnabled(true);
+		
+		if(numOfExecutedCmd ==0)
+			btnUndo.setEnabled(false);
+		else btnUndo.setEnabled(true);
+		
 
 		if(OPERATION_DRAWING == currState) {
 			

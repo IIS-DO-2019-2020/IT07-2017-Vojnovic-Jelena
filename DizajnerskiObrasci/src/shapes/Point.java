@@ -100,6 +100,13 @@ public class Point extends Shape {
 		return "(" + x + ", " + y + ")";
 	}
 
+	@Override
+	public Shape clone() {
+		Point point = new Point(getX(), getY(), getEdgeColor());
+		point.setSelected(isSelected());
+		return point;
+	}
+
 
 
 

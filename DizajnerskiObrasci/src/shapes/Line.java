@@ -105,6 +105,18 @@ public class Line extends Shape {
 		return startPoint + "-->" + endPoint;
 	}
 
+	@Override
+	public Shape clone() {
+		Line line = new Line();
+		line.setStartPoint(new Point(getStartPoint().getX(), getStartPoint().getY()));
+		line.setEndPoint(new Point(getEndPoint().getX(), getEndPoint().getY()));
+		line.setEdgeColor(getEdgeColor());
+		line.setInnerColor(getInnerColor());
+		line.setSelected(isSelected());
+		
+		return line;
+	}
+
 
 
 

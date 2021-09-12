@@ -105,4 +105,14 @@ public class HexagonAdapter extends Shape {
 		}
 	}
 
+	@Override
+	public Shape clone() {
+		HexagonAdapter hexagon = new HexagonAdapter(new Point(getHexagon().getX(), getHexagon().getY()), getHexagon().getR());
+		hexagon.setEdgeColor(getEdgeColor());
+		hexagon.setInnerColor(getInnerColor());
+		hexagon.setSelected(isSelected());
+		
+		return hexagon;
+	}
+
 }

@@ -17,6 +17,7 @@ public abstract class Shape implements Movable, Comparable {
 	
 	public abstract boolean contains(int x, int y);
 	public abstract void draw(Graphics g);
+	public abstract Shape clone();
 
 	
 	

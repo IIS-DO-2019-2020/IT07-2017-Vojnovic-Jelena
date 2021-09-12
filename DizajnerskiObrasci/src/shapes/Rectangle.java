@@ -125,6 +125,16 @@ public class Rectangle extends Shape {
 		return "Upper left point=" + upperLeftPoint + ", height=" + height + ", width=" + width;
 	}
 
+	@Override
+	public Shape clone() {
+		Rectangle rectangle = new Rectangle(new Point(getUpperLeftPoint().getX(), getUpperLeftPoint().getY()), getHeight(), getWidth());
+		rectangle.setEdgeColor(getEdgeColor());
+		rectangle.setInnerColor(getInnerColor());
+		rectangle.setSelected(isSelected());
+		
+		return rectangle;
+	}
+
 
 
 

@@ -102,6 +102,17 @@ public class Circle extends Shape {
 		return "Center=" + center + ", radius=" + radius; 
 	}
 
+	@Override
+	public Shape clone() {
+		Circle circle = new Circle();
+		circle.setCenter(new Point(center.getX(),center.getY()));
+		circle.setRadius(getRadius());
+		circle.setEdgeColor(getEdgeColor());
+		circle.setInnerColor(getInnerColor());
+		circle.setSelected(isSelected());
+		return circle;
+	}
+
 
 
 	

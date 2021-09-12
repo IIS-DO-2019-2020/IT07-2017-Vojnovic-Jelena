@@ -81,5 +81,11 @@ public class Donut extends Circle {
 		return super.toString() + ", inner radius=" + innerRadius;
 	}
 	
+	public Shape clone() {
+		Donut donut = new Donut(new Point(getCenter().getX(), getCenter().getY()), getRadius(), getInnerRadius(), getEdgeColor(), getInnerColor() );
+		donut.setSelected(isSelected());
+		
+		return donut;
+	}
 
 }

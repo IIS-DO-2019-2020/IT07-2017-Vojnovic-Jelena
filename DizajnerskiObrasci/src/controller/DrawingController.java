@@ -3,6 +3,13 @@ package controller;
 import java.awt.Color;
 
 import command.CmdAddShape;
+import command.CmdDeleteShapes;
+import command.CmdUpdateCircle;
+import command.CmdUpdateDonut;
+import command.CmdUpdateHexagon;
+import command.CmdUpdateLine;
+import command.CmdUpdatePoint;
+import command.CmdUpdateRectangle;
 import command.Command;
 import shapes.Rectangle;
 
@@ -197,27 +204,45 @@ public class DrawingController implements Subject {
 	 			dlgPoint.setVisible(true);
 	 			
 	 			if(dlgPoint.getPoint()!=null) {
-	 				model.setShape(index, dlgPoint.getPoint());
-	 				frame.getView().repaint();
+	 				frame.getBtnColorEdge().setBackground(dlgPoint.getEdgeColor());
+					CmdUpdatePoint cmdUpdatePoint = new CmdUpdatePoint((Point) shape , dlgPoint.getPoint());
+					execute(cmdUpdatePoint);
 	 			}
+	 			
 	 		} else if (shape instanceof Line) {
 	 			DlgLine dlgLine = new DlgLine();
 	 			dlgLine.setLine((Line)shape);
 	 			dlgLine.setVisible(true);
 	 			
 	 			if(dlgLine.getLine() !=null) {
-	 				model.setShape(index, dlgLine.getLine());
-	 				frame.getView().repaint();
+	 				frame.getBtnColorEdge().setBackground(dlgLine.getEdgeColor());
+					CmdUpdateLine cmdUpdateLine = new CmdUpdateLine((Line) shape , dlgLine.getLine());
+					execute(cmdUpdateLine);
 	 			}
+	 			
 	 		} else if (shape instanceof Rectangle) {
 	 			DlgRectangle dlgRectangle = new DlgRectangle();
-	 			dlgRectangle.setRectangle((Rectangle)shape);
+	 			dlgRectangle.setRectangle((Rectangle) shape);
 	 			dlgRectangle.setVisible(true);
 	 			
 	 			if(dlgRectangle.getRectangle() !=null) {
-	 				model.setShape(index, dlgRectangle.getRectangle());
-	 				frame.getView().repaint();
+	 				frame.getBtnColorEdge().setBackground(dlgRectangle.getEdgeColor());
+					frame.getBtnColorInner().setBackground(dlgRectangle.getInnerColor());
+					CmdUpdateRectangle cmdUpdateRectangle = new CmdUpdateRectangle((Rectangle) shape, dlgRectangle.getRectangle());
+					execute(cmdUpdateRectangle);
 	 			}
+	 			
+	 		} else if (shape instanceof Circle) {
+	 			DlgCircle dlgCircle = new DlgCircle();
+	 			dlgCircle.setCircle((Circle)shape);
+	 			dlgCircle.setVisible(true);
+	 			
+	 			if(dlgCircle.getCircle() !=null) {
+	 				frame.getBtnColorEdge().setBackground(dlgCircle.getEdgeColor());
+					frame.getBtnColorInner().setBackground(dlgCircle.getInnerColor());
+					CmdUpdateCircle cmdUpdateCircle = new CmdUpdateCircle((Circle) shape, dlgCircle.getCircle());
+					execute(cmdUpdateCircle);	
+	 			} 
 	 			
 	 		} else if (shape instanceof Donut) {
 	 			DlgDonut dlgDonut = new DlgDonut();
@@ -225,26 +250,23 @@ public class DrawingController implements Subject {
 	 			dlgDonut.setVisible(true);
 	 			
 	 			if(dlgDonut.getDonut() !=null) {
-	 				model.setShape(index, dlgDonut.getDonut());
-	 				frame.getView().repaint();
+	 				frame.getBtnColorEdge().setBackground(dlgDonut.getEdgeColor());
+					frame.getBtnColorInner().setBackground(dlgDonut.getInnerColor());
+					CmdUpdateDonut cmdUpdateDonut = new CmdUpdateDonut((Donut) shape, dlgDonut.getDonut());
+					execute(cmdUpdateDonut);
 	 			}
-	 		} else if (shape instanceof Circle) {
-	 			DlgCircle dlgCircle = new DlgCircle();
-	 			dlgCircle.setCircle((Circle)shape);
-	 			dlgCircle.setVisible(true);
 	 			
-	 			if(dlgCircle.getCircle() !=null) {
-	 				model.setShape(index, dlgCircle.getCircle());
-	 				frame.getView().repaint();
-	 			}
+	 		
 	 		} else if (shape instanceof HexagonAdapter) {
 				DlgHexagon dlgHexagon = new DlgHexagon();
 				dlgHexagon.setHexagon((HexagonAdapter) shape);
 				dlgHexagon.setVisible(true);
 				
 				if(dlgHexagon.getHexagon()!=null) {
-					model.setShape(index, dlgHexagon.getHexagon());
-					frame.getView().repaint();
+					frame.getBtnColorEdge().setBackground(dlgHexagon.getEdgeColor());
+					frame.getBtnColorInner().setBackground(dlgHexagon.getInnerColor());
+					CmdUpdateHexagon cmdUpdateHexagon = new CmdUpdateHexagon((HexagonAdapter) shape, dlgHexagon.getHexagon());
+					execute(cmdUpdateHexagon);
 				}
 	 		}
 	 	}
@@ -252,7 +274,8 @@ public class DrawingController implements Subject {
 	 	public void OperationDelete(ActionEvent e) {
 	 		if (model.isEmpty()) return;
 			if (JOptionPane.showConfirmDialog(null, "Da li zaista zelite da obrisete selektovane oblike?", "Potvrda", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == 0) model.removeSelected();
-			frame.getView().repaint();
+			CmdDeleteShapes cmdDeleteShapes = new CmdDeleteShapes(model.getSelectedShapes(), model);
+			execute(cmdDeleteShapes);
 		}
 	 	
 	 	public void execute (Command cmd) {
@@ -321,7 +344,7 @@ public class DrawingController implements Subject {
 		@Override
 		public void notifyObservers() {
 			for(Observer observer: observers) {
-				observer.update(currState, numOfSelectedShapes(), model.getShapes().size());
+				observer.update(currState, numOfSelectedShapes(), model.getShapes().size(), unexecutedCmd.size(), executedCmd.size());
 			}
 			
 		}
