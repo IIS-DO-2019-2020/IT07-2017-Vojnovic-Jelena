@@ -181,7 +181,7 @@ public class FrameDrawing extends JFrame implements Observer {
 		});
 		
 		btnActionDelete.setAlignmentX(Component.CENTER_ALIGNMENT);
-		//panel_3.add(btnActionDelete);
+		panel_3.add(btnActionDelete);
 		
 		btnRedo.addActionListener(new ActionListener() {
 
@@ -197,6 +197,51 @@ public class FrameDrawing extends JFrame implements Observer {
 				controller.undoCommand();			
 			}});
 		
+		//********************PROBA**********************
+		
+		GroupLayout gl_panel_3 = new GroupLayout(panel_3);
+		gl_panel_3.setHorizontalGroup(
+			gl_panel_3.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panel_3.createSequentialGroup()
+					.addGap(48)
+					.addGroup(gl_panel_3.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_panel_3.createSequentialGroup()
+							.addComponent(btnActionEdit)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(btnActionDelete))
+						.addGroup(gl_panel_3.createSequentialGroup()
+							.addGroup(gl_panel_3.createParallelGroup(Alignment.LEADING)
+								.addGroup(gl_panel_3.createParallelGroup(Alignment.TRAILING)
+									.addComponent(btnUndo)))
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addGroup(gl_panel_3.createParallelGroup(Alignment.LEADING)
+								.addComponent(btnRedo))))
+					.addGap(32))
+		);
+		gl_panel_3.setVerticalGroup(
+				gl_panel_3.createParallelGroup(Alignment.LEADING)
+					.addGroup(gl_panel_3.createSequentialGroup()
+						.addContainerGap()
+						.addGroup(gl_panel_3.createParallelGroup(Alignment.TRAILING)
+							.addComponent(btnActionEdit)
+							.addComponent(btnActionDelete))
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addGroup(gl_panel_3.createParallelGroup(Alignment.BASELINE)
+							.addComponent(btnUndo)
+							.addComponent(btnRedo))
+						.addPreferredGap(ComponentPlacement.RELATED)
+						//.addGroup(gl_panel_3.createParallelGroup(Alignment.TRAILING)
+						//	.addComponent(btnToFront)
+						//	.addComponent(btnBringToFront))
+						.addPreferredGap(ComponentPlacement.RELATED)
+						//.addGroup(gl_panel_3.createParallelGroup(Alignment.BASELINE)
+							//.addComponent(btnToBack)
+							//.addComponent(btnBringToBack))
+						.addContainerGap(25, Short.MAX_VALUE))
+			);
+			panel_3.setLayout(gl_panel_3);
+			
+			//*************************GOTOVA PROBA**************
 		JPanel panel_4 = new JPanel();
 		panel_1.add(panel_4);
 		panel_4.setLayout(new BoxLayout(panel_4, BoxLayout.Y_AXIS));

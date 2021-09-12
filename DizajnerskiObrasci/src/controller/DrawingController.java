@@ -58,7 +58,7 @@ public class DrawingController implements Subject {
 		notifyObservers();
 	}
 	
-	public DrawingController(DrawingModel model, FrameDrawing frame) {
+	public DrawingController(FrameDrawing frame,DrawingModel model) {
 		this.model=model;
 		this.frame=frame;
 		
