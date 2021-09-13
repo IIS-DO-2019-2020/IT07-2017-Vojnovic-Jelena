@@ -122,7 +122,22 @@ public class Rectangle extends Shape {
 	}
 	
 	public String toString() {
-		return "Upper left point=" + upperLeftPoint + ", height=" + height + ", width=" + width;
+		return "Rectangle UpperLeftPoint(" + upperLeftPoint.getX()+"|"+upperLeftPoint.getY() + ")|Width(" + width + ")|Height(" + height +")|EdgeColor(" +getEdgeColor().getRGB()+")|InnerColor("+getInnerColor().getRGB()+")";
+		
+	}
+	
+	public static Rectangle parse (String shape) {
+		shape = shape.replace("Rectangle UpperLeftPoint(", "").replace(")", "");
+		String [] params = shape.split("\\|");
+		
+		int x = Integer.parseInt(params[0]);
+		int y = Integer.parseInt(params[1]);
+		int width = Integer.parseInt(params[2].replace("Width(", ""));
+		int height = Integer.parseInt(params[3].replace("Height(", ""));
+		Color edgeColor = Color.decode(params[4].replace("EdgeColor(", ""));
+		Color innerColor = Color.decode(params[5].replace("InnerColor(", ""));
+		
+		return new Rectangle(new Point(x,y), height, width, edgeColor, innerColor);
 	}
 
 	@Override

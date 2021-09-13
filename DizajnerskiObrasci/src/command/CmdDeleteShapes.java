@@ -8,6 +8,7 @@ public class CmdDeleteShapes implements Command {
 	
 	private DrawingModel model;
 	private List<Shape> shapesForDelete;
+	private String cmdLog;
 	
 	public CmdDeleteShapes(List<Shape> shapes, DrawingModel model) {
 		this.model=model;
@@ -19,7 +20,7 @@ public class CmdDeleteShapes implements Command {
 		shapesForDelete.forEach(shape -> {
 			model.removeShape(shape);
 		});
-		
+		cmdLog ="EXECUTE_DELETE_" + shapesForDelete;
 	}
 
 	@Override
@@ -28,7 +29,15 @@ public class CmdDeleteShapes implements Command {
 			model.addShape(shape);
 			shape.setSelected(true);
 		});
-		
+		cmdLog= "UNEXECUTE_DELETE_" + shapesForDelete;
+	}
+	
+	public String getCmdLog() {
+		return cmdLog;
+	}
+
+	public void setCmdLog(String cmdLog) {
+		this.cmdLog = cmdLog;
 	}
 
 }

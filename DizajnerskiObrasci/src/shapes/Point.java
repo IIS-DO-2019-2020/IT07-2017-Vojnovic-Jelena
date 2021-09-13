@@ -23,6 +23,13 @@ public class Point extends Shape {
 		setEdgeColor(edgeColor);
 	}
 	
+	public Point(Point p, Color edgeColor) {
+		this.x = p.getX();
+		this.y = p.getY();
+		setEdgeColor(edgeColor);
+	}
+	
+	
 	public Point(int x, int y, boolean selected) {
 		this(x, y);
 		setSelected(selected);
@@ -97,7 +104,19 @@ public class Point extends Shape {
 	}
 	
 	public String toString() {
-		return "(" + x + ", " + y + ")";
+		return "Point(" + x + "|" + y +")|EdgeColor(" + getEdgeColor().getRGB() + ")";
+	}
+	
+	public static Point parse(String shape) {
+		shape = shape.replace("Point(", "").replace(")", "");
+		
+		String[] params = shape.split("\\|");
+		
+		int x = Integer.parseInt(params[0]);
+		int y = Integer.parseInt(params[1]);
+		Color edgeColor = Color.decode(params[2].replace("EdgeColor(", "").replace(")",""));
+		
+		return new Point(x,y,edgeColor);
 	}
 
 	@Override

@@ -99,13 +99,28 @@ public class Circle extends Shape {
 	}
 	
 	public String toString() {
-		return "Center=" + center + ", radius=" + radius; 
+		return "Circle Center(" + center.getX()+"|"+center.getY() + ")|Radius(" + radius + ")|EdgeColor("+getEdgeColor().getRGB()+")|InnerColor("+getInnerColor().getRGB() + ")";
+	}
+	
+	public static Circle parse(String shape) {
+		shape = shape.replace("Circle Center(", "").replace(")", "");
+		
+		String [] params = shape.split("\\|");
+		
+		int x = Integer.parseInt(params[0]);
+		int y = Integer.parseInt(params[1]);
+		int r = Integer.parseInt(params[2].replace("Radius(", ""));
+		
+		Color edgeColor = Color.decode(params[3].replace("EdgeColor(", ""));
+		Color innerColor = Color.decode(params[4].replace("InnerColor(", ""));
+		
+		return new Circle(new Point(x, y), r, edgeColor, innerColor);
 	}
 
 	@Override
 	public Shape clone() {
 		Circle circle = new Circle();
-		circle.setCenter(new Point(center.getX(),center.getY()));
+		circle.setCenter(new Point(center.getX(), center.getY()));
 		circle.setRadius(getRadius());
 		circle.setEdgeColor(getEdgeColor());
 		circle.setInnerColor(getInnerColor());

@@ -7,6 +7,7 @@ public class CmdUpdateLine implements Command {
 	private Line oldState;
 	private Line newState;
 	private Line original;
+	private String cmdLog;
 	
 	public CmdUpdateLine (Line oldState, Line newState) {
 		this.oldState= oldState;
@@ -23,6 +24,7 @@ public class CmdUpdateLine implements Command {
 		oldState.setEdgeColor(newState.getEdgeColor());
 		oldState.setInnerColor(newState.getInnerColor());
 		
+		cmdLog = "EXECUTE_UPDATE_" + original + "-->" + newState;
 	}
 
 	@Override
@@ -34,6 +36,16 @@ public class CmdUpdateLine implements Command {
 		oldState.setEdgeColor(original.getEdgeColor());
 		oldState.setSelected(original.isSelected());
 		
+		cmdLog = "UNEXECUTE_UPDATE_" + newState + "-->" + original;
+		
+	}
+	
+	public String getCmdLog() {
+		return cmdLog;
+	}
+
+	public void setCmdLog(String cmdLog) {
+		this.cmdLog = cmdLog;
 	}
 
 }

@@ -102,7 +102,20 @@ public class Line extends Shape {
 	}
 	
 	public String toString() {
-		return startPoint + "-->" + endPoint;
+		return "Line(X1 " + startPoint.getX() + "|Y1 " + startPoint.getY() + "|X2 " + endPoint.getX() + "|Y2 " + endPoint.getY() + ")|EdgeColor(" + getEdgeColor().getRGB()+")";
+	}
+	
+	public static Line parse(String shape) {
+		shape = shape.replace("Line(X1 ", "").replace(")", "");
+		
+		String[] params = shape.split("\\|");
+		int x1 = Integer.parseInt(params[0]);
+		int y1 = Integer.parseInt(params[1].replace("Y1 ", ""));
+		int x2 = Integer.parseInt(params[2].replace("X2 ",""));
+		int y2 = Integer.parseInt(params[3].replace("Y2 ", ""));
+		Color edgeColor = Color.decode(params[4].replace("EdgeColor(", ""));
+		
+		return new Line(new Point(x1,y1),new Point(x2,y2), edgeColor);
 	}
 
 	@Override

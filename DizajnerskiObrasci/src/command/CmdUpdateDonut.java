@@ -8,6 +8,7 @@ public class CmdUpdateDonut implements Command {
 	private Donut oldState;
 	private Donut newState;
 	private Donut original;
+	private String cmdLog;
 	
 	public CmdUpdateDonut (Donut oldState, Donut newState) {
 		this.oldState=oldState;
@@ -25,6 +26,7 @@ public class CmdUpdateDonut implements Command {
 		oldState.setInnerColor(newState.getInnerColor());
 		oldState.setSelected(newState.isSelected());
 		
+		cmdLog = "EXECUTE_UPDATE_" + original + "-->" + newState;
 	}
 
 	@Override
@@ -37,6 +39,15 @@ public class CmdUpdateDonut implements Command {
 		oldState.setInnerColor(original.getInnerColor());
 		oldState.setSelected(original.isSelected());
 		
+		cmdLog = "UNEXECUTE_UPDATE_" + newState + "-->" + original;
+	}
+	
+	public String getCmdLog() {
+		return cmdLog;
+	}
+
+	public void setCmdLog(String cmdLog) {
+		this.cmdLog = cmdLog;
 	}
 
 }

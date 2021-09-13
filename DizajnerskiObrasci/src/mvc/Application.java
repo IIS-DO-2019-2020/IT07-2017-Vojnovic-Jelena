@@ -13,7 +13,7 @@ public class Application {
 		
 		frame.getView().setModel(model);
 		
-		DrawingController controller = new DrawingController(frame, model);
+		DrawingController controller = new DrawingController(model, frame);
 		controller.addObserver(frame);
 		
 		frame.setController(controller);

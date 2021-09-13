@@ -7,6 +7,7 @@ public class CmdToBack implements Command {
 	private Shape shape;
 	private DrawingModel model;
 	private int index;
+	private String cmdLog;
 	
 	public CmdToBack(Shape shape, DrawingModel model) {
 		this.shape=shape;
@@ -19,6 +20,8 @@ public class CmdToBack implements Command {
 		model.removeShape(shape);
 		model.addShapeAtIndex(shape, index-1);
 		
+		cmdLog ="EXECUTE_TO-BACK_" +shape;
+		
 	}
 
 	@Override
@@ -26,6 +29,14 @@ public class CmdToBack implements Command {
 		model.removeShape(shape);
 		model.addShapeAtIndex(shape, index);
 		
+		cmdLog = "UNEXECUTE_TO-BACK_" +shape;
 	}
 
+	public String getCmdLog() {
+		return cmdLog;
+	}
+
+	public void setCmdLog(String cmdLog) {
+		this.cmdLog = cmdLog;
+	}
 }

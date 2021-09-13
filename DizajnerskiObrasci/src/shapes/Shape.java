@@ -2,8 +2,10 @@ package shapes;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.io.Serializable;
 
-public abstract class Shape implements Movable, Comparable {
+public abstract class Shape implements Movable, Comparable, Serializable {
+	
 	private boolean selected;
 	private Color edgeColor, innerColor;
 

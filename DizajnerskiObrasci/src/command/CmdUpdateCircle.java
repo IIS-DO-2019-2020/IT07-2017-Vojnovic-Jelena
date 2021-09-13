@@ -7,6 +7,7 @@ public class CmdUpdateCircle implements Command
 	private Circle oldState;
 	private Circle newState;
 	private Circle original;
+	private String cmdLog;
 
 	public CmdUpdateCircle (Circle oldState, Circle newState) {
 		this.oldState=oldState;
@@ -23,6 +24,7 @@ public class CmdUpdateCircle implements Command
 		oldState.setInnerColor(newState.getInnerColor());
 		oldState.setSelected(newState.isSelected());
 		
+		cmdLog = "EXECUTE_UPDATE_" + original + "-->" + newState;
 	}
 
 	@Override
@@ -34,6 +36,16 @@ public class CmdUpdateCircle implements Command
 		oldState.setInnerColor(original.getInnerColor());
 		oldState.setSelected(original.isSelected());
 		
+		cmdLog = "UNEXECUTE_UPDATE_" + newState + "-->" + original;
+		
+	}
+	
+	public String getCmdLog() {
+		return cmdLog;
+	}
+
+	public void setCmdLog(String cmdLog) {
+		this.cmdLog = cmdLog;
 	}
 
 }
