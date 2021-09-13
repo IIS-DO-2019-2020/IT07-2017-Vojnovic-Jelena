@@ -3,7 +3,11 @@ package controller;
 import java.awt.Color;
 
 import command.CmdAddShape;
+import command.CmdBringToBack;
+import command.CmdBringToFront;
 import command.CmdDeleteShapes;
+import command.CmdToBack;
+import command.CmdToFront;
 import command.CmdUpdateCircle;
 import command.CmdUpdateDonut;
 import command.CmdUpdateHexagon;
@@ -307,6 +311,47 @@ public class DrawingController implements Subject {
 	 			execute(redoCmd);
 	 		}
 	 		isRedo=false;
+	 	}
+	 	
+	 	public void toFront() {
+	 		int index = model.getSelected();
+	 		Shape selectedShape = model.getShape(index);
+	 		
+	 		if(index== model.getShapes().size()-1) return;
+	 		
+	 		CmdToFront cmdToFront = new CmdToFront(selectedShape, model);
+	 		execute(cmdToFront);
+	 		
+	 	}
+	 	
+	 	public void toBack () {
+	 		int index = model.getSelected();
+	 		Shape selectedShape = model.getShape(index);
+	 		
+	 		if(index==0) return;
+	 		
+	 		CmdToBack cmdToBack = new CmdToBack(selectedShape, model);
+	 		execute(cmdToBack);
+	 	}
+	 	
+	 	public void bringToFront () {
+	 		int index = model.getSelected();
+	 		Shape selectedShape = model.getShape(index);
+	 		
+	 		if(index== model.getShapes().size()-1) return;
+	 		
+	 		CmdBringToFront cmdBringToFront = new CmdBringToFront(selectedShape, model);
+	 		execute(cmdBringToFront);
+	 	}
+	 	
+	 	public void bringToBack() {
+	 		int index=model.getSelected();
+	 		Shape selectedShape = model.getShape(index);
+	 		
+	 		if(index==0) return;
+	 		
+	 		CmdBringToBack cmdBringToBack = new CmdBringToBack(selectedShape, model);
+	 		execute(cmdBringToBack);
 	 	}
 	 	
 	 	public int numOfSelectedShapes() {

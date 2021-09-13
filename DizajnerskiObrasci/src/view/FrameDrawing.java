@@ -50,6 +50,10 @@ public class FrameDrawing extends JFrame implements Observer {
 	private JButton btnActionDelete = new JButton("Obrisi");
 	private JButton btnRedo = new JButton("Ponovi");
 	private JButton btnUndo = new JButton("Ponisti");
+	private JButton btnToFront = new JButton("Ispred");
+	private JButton btnToBack = new JButton("Iza");
+	private JButton btnBringToFront = new JButton("Ispred svih");
+	private JButton btnBringToBack = new JButton("Iza svih");
 	private JToggleButton btnShapePoint = new JToggleButton("Tacka");
 	private JToggleButton btnShapeLine = new JToggleButton("Linija");
 	private JToggleButton btnShapeRectangle = new JToggleButton("Pravougaonik");
@@ -172,7 +176,7 @@ public class FrameDrawing extends JFrame implements Observer {
 		});
 		
 		btnActionEdit.setAlignmentX(Component.CENTER_ALIGNMENT);
-		panel_3.add(btnActionEdit);
+		//panel_3.add(btnActionEdit);
 		
 		btnActionDelete.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -181,7 +185,7 @@ public class FrameDrawing extends JFrame implements Observer {
 		});
 		
 		btnActionDelete.setAlignmentX(Component.CENTER_ALIGNMENT);
-		panel_3.add(btnActionDelete);
+		//panel_3.add(btnActionDelete);
 		
 		btnRedo.addActionListener(new ActionListener() {
 
@@ -197,7 +201,35 @@ public class FrameDrawing extends JFrame implements Observer {
 				controller.undoCommand();			
 			}});
 		
-		//********************PROBA**********************
+		btnToFront.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controller.toFront();
+			}});
+		
+		btnToBack.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controller.toBack();
+			}});
+		
+		btnBringToBack.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controller.bringToBack();
+			}});
+		
+		btnBringToFront.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controller.bringToFront();
+			}});
+		
+	
 		
 		GroupLayout gl_panel_3 = new GroupLayout(panel_3);
 		gl_panel_3.setHorizontalGroup(
@@ -212,9 +244,13 @@ public class FrameDrawing extends JFrame implements Observer {
 						.addGroup(gl_panel_3.createSequentialGroup()
 							.addGroup(gl_panel_3.createParallelGroup(Alignment.LEADING)
 								.addGroup(gl_panel_3.createParallelGroup(Alignment.TRAILING)
-									.addComponent(btnUndo)))
+										.addComponent(btnToFront)
+										.addComponent(btnUndo))
+									.addComponent(btnToBack))
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addGroup(gl_panel_3.createParallelGroup(Alignment.LEADING)
+									.addComponent(btnBringToFront)
+									.addComponent(btnBringToBack)
 								.addComponent(btnRedo))))
 					.addGap(32))
 		);
@@ -230,19 +266,19 @@ public class FrameDrawing extends JFrame implements Observer {
 							.addComponent(btnUndo)
 							.addComponent(btnRedo))
 						.addPreferredGap(ComponentPlacement.RELATED)
-						//.addGroup(gl_panel_3.createParallelGroup(Alignment.TRAILING)
-						//	.addComponent(btnToFront)
-						//	.addComponent(btnBringToFront))
+						.addGroup(gl_panel_3.createParallelGroup(Alignment.TRAILING)
+							.addComponent(btnToFront)
+							.addComponent(btnBringToFront))
 						.addPreferredGap(ComponentPlacement.RELATED)
-						//.addGroup(gl_panel_3.createParallelGroup(Alignment.BASELINE)
-							//.addComponent(btnToBack)
-							//.addComponent(btnBringToBack))
+						.addGroup(gl_panel_3.createParallelGroup(Alignment.BASELINE)
+							.addComponent(btnToBack)
+							.addComponent(btnBringToBack))
 						.addContainerGap(25, Short.MAX_VALUE))
 			);
 			panel_3.setLayout(gl_panel_3);
-			
-			//*************************GOTOVA PROBA**************
+
 		JPanel panel_4 = new JPanel();
+		panel_4.setBorder(new TitledBorder(null, "Oblici", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		panel_1.add(panel_4);
 		panel_4.setLayout(new BoxLayout(panel_4, BoxLayout.Y_AXIS));
 		
@@ -326,6 +362,10 @@ public class FrameDrawing extends JFrame implements Observer {
 			
 			btnActionEdit.setEnabled(false);
 			btnActionDelete.setEnabled(false);
+			btnToFront.setEnabled(false);
+			btnToBack.setEnabled(false);
+			btnBringToFront.setEnabled(false);
+			btnBringToBack.setEnabled(false);
 			
 			btnShapePoint.setEnabled(true);
 			btnShapeLine.setEnabled(true);
@@ -340,17 +380,42 @@ public class FrameDrawing extends JFrame implements Observer {
 		
 		if(OPERATION_EDIT_DELETE == currState) {
 			
-			if(numOfSelectedShapes>1)
-			btnActionEdit.setEnabled(false);
+			if(numOfSelectedShapes>1) 
+			{
+				btnActionEdit.setEnabled(false);
+				
+				btnToFront.setEnabled(false);
+				btnToBack.setEnabled(false);
+				btnBringToFront.setEnabled(false);
+				btnBringToBack.setEnabled(false);
+			}
 			
 			else if (numOfSelectedShapes==1)
-			btnActionEdit.setEnabled(true);
+			{
+				btnActionEdit.setEnabled(true);
+				
+				btnToFront.setEnabled(true);
+				btnToBack.setEnabled(true);
+				btnBringToFront.setEnabled(true);
+				btnBringToBack.setEnabled(true);
+			}
 			
-			else btnActionEdit.setEnabled(false);
+			else
+			{
+				btnActionEdit.setEnabled(false);
+				btnToFront.setEnabled(false);
+				btnToBack.setEnabled(false);
+				btnBringToFront.setEnabled(false);
+				btnBringToBack.setEnabled(false);
+			}
 			
 			if(numOfSelectedShapes>=1)
-			btnActionDelete.setEnabled(true);
-			else btnActionDelete.setEnabled(false);
+			
+				btnActionDelete.setEnabled(true);
+			
+			else
+				
+				btnActionDelete.setEnabled(false);
 			
 			btnShapePoint.setEnabled(false);
 			btnShapeLine.setEnabled(false);
