@@ -1,5 +1,6 @@
 package controller;
 
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.util.ListIterator;
 
@@ -24,6 +25,8 @@ public class DrawingController {
 	
 	private DrawingModel model;
 	private DrawingFrame frame;
+	
+	
 	
 	private DlgPoint dlgPoint = new DlgPoint();
 	private DlgLine dlgLine = new DlgLine();
@@ -60,6 +63,8 @@ public class DrawingController {
 		}
 		else 
 		{
+			//CRTANJE
+			
 			if(!frame.getBtnLine().isSelected()) lineWaitingForSecondPoint = false;
 			
 			if(frame.getBtnPoint().isSelected()) {
@@ -153,11 +158,150 @@ public class DrawingController {
 			}
 		}
 		
-
-		
 	}
-
+	
+	//BRISANJE
+	public void delete(ActionEvent e) {
+ 		if (model.isEmpty()) return;
+		if (JOptionPane.showConfirmDialog(null, "Da li zaista zelite da obrisete selektovane oblike?", "Potvrda", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == 0) model.removeSelected();
+		frame.getView().repaint();
+	}
 	
 	
+	public void edit(ActionEvent e) {
+		
+		int index  = model.getSelected();
+		Shape shape = model.getSelectedShapes().get(0);
+		
+		if(shape instanceof Point) {
+			DlgPoint dlgPoint = new DlgPoint();
+			Point oldState = (Point) shape;
+			dlgPoint.setTxtXEdt(true);
+			dlgPoint.setTxtYEdt(true);
+			dlgPoint.setTxtX(Integer.toString(oldState.getX()));
+			dlgPoint.setTxtY(Integer.toString(oldState.getY()));
+			dlgPoint.setColor(oldState.getEdgeColor());
+			dlgPoint.setVisible(true);
+			
+			if (dlgPoint.isOk()) {
+				Point newState = new Point(Integer.parseInt(dlgPoint.getTxtX()),
+						Integer.parseInt(dlgPoint.getTxtY()), dlgPoint.getColor());
+				model.setShape(index, newState);
+				frame.getView().repaint();
+			
+			}
+		} else if (shape instanceof Line) {
+			DlgLine dlgLine = new DlgLine();
+			Line oldState = (Line) shape;
+			dlgLine.setTxtStartPointXEdt(true);
+			dlgLine.setTxtStartPointYEdt(true);
+			dlgLine.setTxtEndPointXEdt(true);
+			dlgLine.setTxtEndPointYEdt(true);
+			dlgLine.setTxtStartPointX(Integer.toString(oldState.getStartPoint().getX()));
+			dlgLine.setTxtStartPointY(Integer.toString(oldState.getStartPoint().getY()));
+			dlgLine.setTxtEndPointX(Integer.toString(oldState.getEndPoint().getX()));
+			dlgLine.setTxtEndPointY(Integer.toString(oldState.getEndPoint().getY()));
+			dlgLine.setCol(oldState.getEdgeColor());
+			dlgLine.setVisible(true);
 
+			if (dlgLine.isOk()) {
+				Line newState = new Line(
+						new Point(Integer.parseInt(dlgLine.getTxtStartPointX()),
+								Integer.parseInt(dlgLine.getTxtStartPointY())),
+						new Point(Integer.parseInt(dlgLine.getTxtEndPointX()),
+								Integer.parseInt(dlgLine.getTxtEndPointY())),
+						dlgLine.getCol());
+				model.setShape(index, newState);
+				frame.getView().repaint();
+			
+					}
+		} else if (shape instanceof Rectangle) {
+			Rectangle oldState = (Rectangle) shape;
+			DlgRectangle dlgRectangle = new DlgRectangle();
+			dlgRectangle.setTxtXKoordinataEnabled(true);
+			dlgRectangle.setTxtYKoordinataEnabled(true);
+			dlgRectangle.setTxtXCoordinate(Integer.toString(oldState.getUpperLeftPoint().getX()));
+			dlgRectangle.setTxtYCoordinate(Integer.toString(oldState.getUpperLeftPoint().getY()));
+			dlgRectangle.setTxtHeight(Integer.toString(oldState.getHeight()));
+			dlgRectangle.setTxtWidth(Integer.toString(oldState.getWidth()));
+			dlgRectangle.setEdgeColor(oldState.getEdgeColor());
+			dlgRectangle.setInnerColor(oldState.getInnerColor());
+			dlgRectangle.pack();
+			dlgRectangle.setVisible(true);
+			
+			if (dlgRectangle.isOk()) {
+				Rectangle newState = new Rectangle(
+						new Point(Integer.parseInt(dlgRectangle.getTxtXCoordinate()),
+								Integer.parseInt(dlgRectangle.getTxtYCoordinate())),
+						Integer.parseInt(dlgRectangle.getTxtHeight()),
+						Integer.parseInt(dlgRectangle.getTxtWidth()), dlgRectangle.getInnerColor(),
+						dlgRectangle.getEdgeColor());
+				model.setShape(index, newState);
+				frame.getView().repaint();
+			}
+
+					
+		} else if (shape instanceof Circle) {
+			
+			Circle oldState = (Circle) shape;
+			DlgCircle dlgCircle = new DlgCircle();
+			dlgCircle.setTxtKoordXEdt(true);
+			dlgCircle.setTxtKoordYEdt(true);
+			dlgCircle.setTxtXCoordinate(Integer.toString(oldState.getCenter().getX()));
+			dlgCircle.setTxtYCoordinate(Integer.toString(oldState.getCenter().getY()));
+			dlgCircle.setTxtRadius(Integer.toString(oldState.getRadius()));
+			dlgCircle.setInnerColor(oldState.getInnerColor());
+			dlgCircle.setEdgeColor(oldState.getEdgeColor());
+			dlgCircle.pack();
+			dlgCircle.setVisible(true);
+
+			if (dlgCircle.isOk()) {
+				Circle newState = new Circle(
+						new Point(Integer.parseInt(dlgCircle.getTxtXCoordinate()),
+								Integer.parseInt(dlgCircle.getTxtYCoordinate())),
+						Integer.parseInt(dlgCircle.getTxtRadius()), dlgCircle.getInnerColor(),
+						dlgCircle.getEdgeColor());
+				model.setShape(index, newState);
+				frame.getView().repaint();
+				}
+			
+		}else if(shape instanceof Donut) {
+			Donut oldState = (Donut) shape;
+			DlgDonut dglDonut = new DlgDonut();
+			dglDonut.setTxtXCoordEditable(true);
+			dglDonut.setTxtYCoordEditable(true);
+			dglDonut.setTxtXCoordinate(Integer.toString(oldState.getCenter().getX()));
+			dglDonut.setTxtYCoordinate(Integer.toString(oldState.getCenter().getY()));
+			dglDonut.setTxtInnerRadius(Integer.toString(oldState.getInnerRadius()));
+			dglDonut.setTxtOuterRadius(Integer.toString(oldState.getRadius()));
+			dglDonut.setEdgeColor(oldState.getEdgeColor());
+			dglDonut.setInnerColor(oldState.getInnerColor());
+			// dialogDonut.pack();
+			dglDonut.setVisible(true);
+			
+			if (dglDonut.isOk()) {
+				try {
+					Donut newState = new Donut(
+							new Point(Integer.parseInt(dglDonut.getTxtXCoordinate()),
+									Integer.parseInt(dglDonut.getTxtYCoordinate())),
+							Integer.parseInt(dglDonut.getTxtOuterRadius()),
+							Integer.parseInt(dglDonut.getTxtInnerRadius()));
+					newState.setEdgeColor(dglDonut.getEdgeColor());
+					newState.setInnerColor(dglDonut.getInnerColor());
+					model.setShape(index, newState);
+					frame.getView().repaint();
+					
+				} catch (NumberFormatException e3) {
+					JOptionPane.showMessageDialog(new JFrame(), "Wrong entry!", "Error", JOptionPane.WARNING_MESSAGE);
+				} catch (Exception e4) {
+					JOptionPane.showMessageDialog(new JFrame(), "Inner radius shoud be less than outer radius!",
+							"Error", JOptionPane.WARNING_MESSAGE);
+				}
+			}
+					
+		
+		} 
+		
+		
+		}
 }

@@ -4,19 +4,15 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.ComponentOrientation;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -30,6 +26,10 @@ import controller.DrawingController;
 
 public class DrawingFrame extends JFrame {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private DrawingView view = new DrawingView();
 	private DrawingController controller;
 	
@@ -230,9 +230,14 @@ public class DrawingFrame extends JFrame {
 		btnEdit.setPreferredSize(new Dimension(60, 25));
 		btnEdit.setMinimumSize(new Dimension(60, 25));
 		btnEdit.setMaximumSize(new Dimension(60, 25));
-		btnEdit.setEnabled(false);
-		
-		
+		btnEdit.setEnabled(true);
+		btnEdit.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controller.edit(e);
+			}
+		});
 		northPanel.add(btnEdit);
 		buttonGroup.add(btnEdit);
 		
@@ -240,7 +245,15 @@ public class DrawingFrame extends JFrame {
 		btnDelete.setPreferredSize(new Dimension(75, 25));
 		btnDelete.setMinimumSize(new Dimension(75, 25));
 		btnDelete.setMaximumSize(new Dimension(75, 25));
-		btnDelete.setEnabled(false);
+		btnDelete.setEnabled(true);
+		
+		btnDelete.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controller.delete(e);
+			}
+		});
 		
 		
 		northPanel.add(btnDelete);
