@@ -34,6 +34,8 @@ public class DlgRectangle extends JDialog{
 
 	private final JPanel contentPanel = new JPanel();
 	
+	private Rectangle rectangle = null;
+	
 	private JTextField txtXCoordinate;
 	private JTextField txtYCoordinate;
 	
@@ -298,7 +300,7 @@ public class DlgRectangle extends JDialog{
 
 	public void setTxtXCoordinate(String txtXCoordinate) {
 		this.txtXCoordinate.setText(txtXCoordinate);
-		;
+		
 	}
 
 	public String getTxtYCoordinate() {
@@ -307,7 +309,7 @@ public class DlgRectangle extends JDialog{
 
 	public void setTxtYCoordinate(String txtYCoordinate) {
 		this.txtYCoordinate.setText(txtYCoordinate);
-		;
+		
 	}
 
 	public String getTxtHeight() {
@@ -358,4 +360,9 @@ public class DlgRectangle extends JDialog{
 	public void setOk(boolean ok) {
 		this.ok = ok;
 	}
+	
+	public Rectangle getRectangle() {
+		return rectangle;
+	}
+
 }
