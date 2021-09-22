@@ -129,6 +129,8 @@ public class DlgHexagon extends JDialog {
 			public void actionPerformed(ActionEvent arg0) {
 				innerColor = JColorChooser.showDialog(null, "Choose a color for the inside of the circle:",
 						Color.WHITE);
+				if (innerColor == null) innerColor = Color.WHITE;
+				btnInnerColor.setBackground(innerColor);
 			}
 		});
 
@@ -138,6 +140,8 @@ public class DlgHexagon extends JDialog {
 			public void actionPerformed(ActionEvent e) {
 				edgeColor = JColorChooser.showDialog(null, "Choose a color for the border of the circle:",
 						Color.BLACK);
+				if (edgeColor == null) edgeColor = Color.BLACK;
+				btnEdgeColor.setBackground(edgeColor);
 			}
 		});
 		

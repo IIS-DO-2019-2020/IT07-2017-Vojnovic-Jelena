@@ -7,8 +7,10 @@ import java.util.ListIterator;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
+import adapter.HexagonAdapter;
 import dialogs.DlgCircle;
 import dialogs.DlgDonut;
+import dialogs.DlgHexagon;
 import dialogs.DlgLine;
 import dialogs.DlgPoint;
 import dialogs.DlgRectangle;
@@ -155,6 +157,26 @@ public class DrawingController {
 							JOptionPane.WARNING_MESSAGE);
 				}
 				
+			} else if (frame.getBtnHexagon().isSelected())  {
+				DlgHexagon dlgHexagon = new DlgHexagon();
+				
+				dlgHexagon.setTxtKoordXEdt(false);
+				dlgHexagon.setTxtKoordYEdt(false);
+				dlgHexagon.setTxtXCoordinate(Integer.toString(e.getX()));
+				dlgHexagon.setTxtYCoordinate(Integer.toString(e.getY()));
+				dlgHexagon.setTxtRadius("");
+				dlgHexagon.setEdgeColor(frame.getBtnEdgeColor().getBackground());
+				dlgHexagon.setInnerColor(frame.getBtnInnerColor().getBackground());
+				dlgHexagon.pack();
+				dlgHexagon.setVisible(true);
+				
+				if (dlgHexagon.isOk()) {
+					int radius = Integer.parseInt(dlgHexagon.getTxtRadius());
+					HexagonAdapter hexagon = new HexagonAdapter(new Point(e.getX(), e.getY()), radius,
+							dlgHexagon.getInnerColor(), dlgHexagon.getEdgeColor());
+					model.add(hexagon);
+					frame.getView().repaint();
+				}
 			}
 		}
 		
@@ -167,6 +189,8 @@ public class DrawingController {
 		frame.getView().repaint();
 	}
 	
+	
+	//MODIFIKACIJA
 	
 	public void edit(ActionEvent e) {
 		
@@ -241,31 +265,7 @@ public class DrawingController {
 			}
 
 					
-		} else if (shape instanceof Circle) {
-			
-			Circle oldState = (Circle) shape;
-			DlgCircle dlgCircle = new DlgCircle();
-			dlgCircle.setTxtKoordXEdt(true);
-			dlgCircle.setTxtKoordYEdt(true);
-			dlgCircle.setTxtXCoordinate(Integer.toString(oldState.getCenter().getX()));
-			dlgCircle.setTxtYCoordinate(Integer.toString(oldState.getCenter().getY()));
-			dlgCircle.setTxtRadius(Integer.toString(oldState.getRadius()));
-			dlgCircle.setInnerColor(oldState.getInnerColor());
-			dlgCircle.setEdgeColor(oldState.getEdgeColor());
-			dlgCircle.pack();
-			dlgCircle.setVisible(true);
-
-			if (dlgCircle.isOk()) {
-				Circle newState = new Circle(
-						new Point(Integer.parseInt(dlgCircle.getTxtXCoordinate()),
-								Integer.parseInt(dlgCircle.getTxtYCoordinate())),
-						Integer.parseInt(dlgCircle.getTxtRadius()), dlgCircle.getInnerColor(),
-						dlgCircle.getEdgeColor());
-				model.setShape(index, newState);
-				frame.getView().repaint();
-				}
-			
-		}else if(shape instanceof Donut) {
+		} else if(shape instanceof Donut) {
 			Donut oldState = (Donut) shape;
 			DlgDonut dglDonut = new DlgDonut();
 			dglDonut.setTxtXCoordEditable(true);
@@ -298,10 +298,56 @@ public class DrawingController {
 							"Error", JOptionPane.WARNING_MESSAGE);
 				}
 			}
-					
+	
 		
-		} 
-		
-		
+		} else if (shape instanceof Circle) {
+			
+			Circle oldState = (Circle) shape;
+			DlgCircle dlgCircle = new DlgCircle();
+			dlgCircle.setTxtKoordXEdt(true);
+			dlgCircle.setTxtKoordYEdt(true);
+			dlgCircle.setTxtXCoordinate(Integer.toString(oldState.getCenter().getX()));
+			dlgCircle.setTxtYCoordinate(Integer.toString(oldState.getCenter().getY()));
+			dlgCircle.setTxtRadius(Integer.toString(oldState.getRadius()));
+			dlgCircle.setInnerColor(oldState.getInnerColor());
+			dlgCircle.setEdgeColor(oldState.getEdgeColor());
+			dlgCircle.pack();
+			dlgCircle.setVisible(true);
+
+			if (dlgCircle.isOk()) {
+				Circle newState = new Circle(
+						new Point(Integer.parseInt(dlgCircle.getTxtXCoordinate()),
+								Integer.parseInt(dlgCircle.getTxtYCoordinate())),
+						Integer.parseInt(dlgCircle.getTxtRadius()), dlgCircle.getInnerColor(),
+						dlgCircle.getEdgeColor());
+				model.setShape(index, newState);
+				frame.getView().repaint();
+				}	
+			
+		} else if (shape instanceof HexagonAdapter) {
+			
+			HexagonAdapter oldState =(HexagonAdapter) shape;
+			DlgHexagon dlgHexagon = new DlgHexagon();
+			
+			dlgHexagon.setTxtKoordXEdt(true);
+			dlgHexagon.setTxtKoordYEdt(true);
+			dlgHexagon.setTxtXCoordinate(Integer.toString(oldState.getHexagon().getX()));
+			dlgHexagon.setTxtYCoordinate(Integer.toString(oldState.getHexagon().getY()));
+			dlgHexagon.setTxtRadius(Integer.toString(oldState.getHexagon().getR()));
+			dlgHexagon.setEdgeColor(oldState.getHexagon().getBorderColor());
+			dlgHexagon.setInnerColor(oldState.getHexagon().getAreaColor());
+			dlgHexagon.pack();
+			dlgHexagon.setVisible(true);
+			
+			if (dlgHexagon.isOk()) {
+				HexagonAdapter newState = new HexagonAdapter(
+						new Point(Integer.parseInt(dlgHexagon.getTxtXCoordinate()),
+								Integer.parseInt(dlgHexagon.getTxtYCoordinate())),
+						Integer.parseInt(dlgHexagon.getTxtRadius()), dlgHexagon.getInnerColor(),
+						dlgHexagon.getEdgeColor());
+				model.setShape(index, newState);
+				frame.getView().repaint();
+				}	
 		}
+	}
 }
