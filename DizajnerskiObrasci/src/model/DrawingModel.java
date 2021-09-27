@@ -39,8 +39,8 @@ public class DrawingModel {
 		return -1;
 	}
 	
-	public void setShape(int index, Shape shape) {
-		shapes.set(index, shape);
+	public void addShapeAtIndex(Shape shape, int ind) {
+		shapes.add(ind, shape);
 	}
 	
 	public void add(Shape p) {
@@ -64,7 +64,13 @@ public class DrawingModel {
 		return shapes.isEmpty();
 	}
 	
+	public int getIndex(Shape shape) {
+		return shapes.indexOf(shape);
+	}
 	
+	public Shape getShape(int index) {
+		return shapes.get(index);
+	}
 	
 	
 }

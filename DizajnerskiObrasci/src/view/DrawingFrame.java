@@ -164,37 +164,32 @@ public class DrawingFrame extends JFrame {
 		btnFront.setPreferredSize(new Dimension(75, 25));
 		btnFront.setMinimumSize(new Dimension(75, 25));
 		btnFront.setMaximumSize(new Dimension(75, 25));
-		btnFront.setEnabled(false);
-		
-		
+		btnFront.setEnabled(true);
+		//
 		toolBar_1.add(btnFront);
 		
 		btnBack = new JButton("Back");
 		btnBack.setPreferredSize(new Dimension(75, 25));
 		btnBack.setMinimumSize(new Dimension(75, 25));
 		btnBack.setMaximumSize(new Dimension(75, 25));
-		btnBack.setEnabled(false);
-		
-	
+		btnBack.setEnabled(true);
+		//
 		toolBar_1.add(btnBack);
 		
 		btnToFront = new JButton("To Front");
 		btnToFront.setPreferredSize(new Dimension(75, 25));
 		btnToFront.setMinimumSize(new Dimension(75, 25));
 		btnToFront.setMaximumSize(new Dimension(75, 25));
-		btnToFront.setEnabled(false);
-		
-		
-	
+		btnToFront.setEnabled(true);
+		//
 		toolBar_1.add(btnToFront);
 		
 		btnToBack = new JButton("To Back");
 		btnToBack.setPreferredSize(new Dimension(75, 25));
 		btnToBack.setMinimumSize(new Dimension(75, 25));
 		btnToBack.setMaximumSize(new Dimension(75, 25));
-		btnToBack.setEnabled(false);
-		
-	
+		btnToBack.setEnabled(true);
+		//
 		toolBar_1.add(btnToBack);
 		
 		separator = new JSeparator();

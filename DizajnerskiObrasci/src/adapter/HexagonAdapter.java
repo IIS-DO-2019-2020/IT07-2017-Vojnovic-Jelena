@@ -5,6 +5,7 @@ import java.awt.Graphics;
 
 import hexagon.Hexagon;
 import shapes.Point;
+import shapes.Shape;
 import shapes.SurfaceShape;
 
 public class HexagonAdapter extends SurfaceShape {
@@ -15,11 +16,17 @@ public class HexagonAdapter extends SurfaceShape {
 		
 	}
 	
+	public HexagonAdapter(Point center, int radius) {
+		this.hexagon = new Hexagon(center.getX(), center.getY(), radius);
+		
+	}
+	
 	public HexagonAdapter(Point center, int radius, Color innerColor, Color edgeColor) {
 		this.hexagon = new Hexagon(center.getX(), center.getY(), radius);
 		this.hexagon.setAreaColor(innerColor);
 		this.hexagon.setBorderColor(edgeColor);
 	}
+	
 	
 	public Hexagon getHexagon() {
 		return hexagon;
@@ -105,5 +112,22 @@ public class HexagonAdapter extends SurfaceShape {
 	public double area() {
 		return hexagon.getR() * hexagon.getR() * Math.PI;
 	}
-
+/*
+	public HexagonAdapter clone(HexagonAdapter h) {
+		h.getHexagon().setX(hexagon.getX());
+		h.getHexagon().setY(hexagon.getY());
+		h.getHexagon().setR(hexagon.getR());
+		h.getHexagon().setBorderColor(hexagon.getBorderColor());
+		h.getHexagon().setAreaColor(hexagon.getAreaColor());
+		return h;
+	}
+	*/
+	
+	public Shape clone() {
+		HexagonAdapter hexagon = new HexagonAdapter(new Point(getHexagon().getX(), getHexagon().getY()), getHexagon().getR());
+		hexagon.setEdgeColor(getEdgeColor());
+		hexagon.setInnerColor(getInnerColor());
+		hexagon.setSelected(isSelected());
+				return hexagon;
+	}
 }

@@ -8,6 +8,15 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import adapter.HexagonAdapter;
+import command.CmdAddShape;
+import command.CmdDeleteShapes;
+import command.CmdUndoRedoStack;
+import command.CmdUpdateCircle;
+import command.CmdUpdateDonut;
+import command.CmdUpdateHexagon;
+import command.CmdUpdateLine;
+import command.CmdUpdatePoint;
+import command.CmdUpdateRectangle;
 import dialogs.DlgCircle;
 import dialogs.DlgDonut;
 import dialogs.DlgHexagon;
@@ -23,11 +32,11 @@ import shapes.Rectangle;
 import shapes.Shape;
 import view.DrawingFrame;
 
+
 public class DrawingController {
 	
 	private DrawingModel model;
 	private DrawingFrame frame;
-	
 	
 	
 	private DlgPoint dlgPoint = new DlgPoint();
@@ -38,6 +47,8 @@ public class DrawingController {
 	private boolean lineWaitingForSecondPoint = false;
 	private Point lineFirstPoint;
 	
+	private CmdUndoRedoStack cmdDeque = new CmdUndoRedoStack();
+	
 	public DrawingController(DrawingModel model, DrawingFrame frame) {
 		this.model=model;
 		this.frame=frame;
@@ -46,6 +57,7 @@ public class DrawingController {
 	public void mouseClicked(MouseEvent e){
 		
 		Point mouseClick = new Point (e.getX(), e.getY());
+
 		
 		//SELEKCIJA
 		if(frame.getBtnSelect().isSelected()) {
@@ -69,14 +81,23 @@ public class DrawingController {
 			
 			if(!frame.getBtnLine().isSelected()) lineWaitingForSecondPoint = false;
 			
+			//POINT
 			if(frame.getBtnPoint().isSelected()) {
-				model.add(new Point(mouseClick.getX(), mouseClick.getY(), dlgPoint.getColor()));
+				Point point = new Point(mouseClick.getX(), mouseClick.getY(), dlgPoint.getColor());
+				point.setEdgeColor(frame.getBtnEdgeColor().getBackground());
+				CmdAddShape cmd = new CmdAddShape(model, point);
+				cmd.execute();
 				frame.getView().repaint();
 				return;
 				
+			//LINE
 			} else if(frame.getBtnLine().isSelected()) {
+			
 				if(lineWaitingForSecondPoint) {
-					model.add(new Line(lineFirstPoint, mouseClick, dlgLine.getCol()));
+					Line line = new Line(lineFirstPoint, mouseClick, dlgLine.getCol());
+					CmdAddShape cmd = new CmdAddShape(model, line);
+					cmd.execute();
+					
 					lineWaitingForSecondPoint=false;
 					frame.getView().repaint();
 					return;
@@ -104,7 +125,10 @@ public class DrawingController {
 					int height = Integer.parseInt(dlgRectangle.getTxtHeight());
 					Rectangle rectangle = new Rectangle(new Point(mouseClick.getX(), mouseClick.getY()), height, width,
 							dlgRectangle.getInnerColor(), dlgRectangle.getEdgeColor());
-					model.add(rectangle);
+					frame.getBtnEdgeColor().setBackground(dlgRectangle.getEdgeColor());
+					frame.getBtnInnerColor().setBackground(dlgRectangle.getInnerColor());
+					CmdAddShape cmd = new CmdAddShape(model, rectangle);
+					cmd.execute();
 					frame.getView().repaint();
 					
 				}
@@ -127,7 +151,10 @@ public class DrawingController {
 					Circle circle = new Circle(new Point(e.getX(), e.getY()), radius);
 					circle.setEdgeColor(dlgCircle.getEdgeColor());
 					circle.setInnerColor(dlgCircle.getInnerColor());
-					model.add(circle);
+					frame.getBtnEdgeColor().setBackground(dlgCircle.getEdgeColor());
+					frame.getBtnInnerColor().setBackground(dlgCircle.getInnerColor());
+					CmdAddShape cmd = new CmdAddShape(model, circle);
+					cmd.execute();
 					frame.getView().repaint();
 				}
 			} else if(frame.getBtnDonut().isSelected()) {
@@ -149,7 +176,10 @@ public class DrawingController {
 					Donut donut = new Donut(new Point(e.getX(), e.getY()), radius, innerRadius);
 					donut.setInnerColor(dlgDonut.getInnerColor());
 					donut.setEdgeColor(dlgDonut.getEdgeColor());
-					model.add(donut);
+					frame.getBtnEdgeColor().setBackground(dlgDonut.getEdgeColor());
+					frame.getBtnInnerColor().setBackground(dlgDonut.getInnerColor());
+					CmdAddShape cmd = new CmdAddShape(model, donut);
+					cmd.execute();
 					frame.getView().repaint();
 					} 
 				}catch (Exception e1) {
@@ -174,7 +204,10 @@ public class DrawingController {
 					int radius = Integer.parseInt(dlgHexagon.getTxtRadius());
 					HexagonAdapter hexagon = new HexagonAdapter(new Point(e.getX(), e.getY()), radius,
 							dlgHexagon.getInnerColor(), dlgHexagon.getEdgeColor());
-					model.add(hexagon);
+					frame.getBtnEdgeColor().setBackground(dlgHexagon.getEdgeColor());
+					frame.getBtnInnerColor().setBackground(dlgHexagon.getInnerColor());
+					CmdAddShape cmd = new CmdAddShape(model, hexagon);
+					cmd.execute();
 					frame.getView().repaint();
 				}
 			}
@@ -185,8 +218,12 @@ public class DrawingController {
 	//BRISANJE
 	public void delete(ActionEvent e) {
  		if (model.isEmpty()) return;
-		if (JOptionPane.showConfirmDialog(null, "Da li zaista zelite da obrisete selektovane oblike?", "Potvrda", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == 0) model.removeSelected();
+		if (JOptionPane.showConfirmDialog(null, "Da li zaista zelite da obrisete selektovane oblike?", "Potvrda", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == 0) {
+			CmdDeleteShapes cmdDeleteShapes = new CmdDeleteShapes(model, model.getSelectedShapes());
+			cmdDeleteShapes.execute();
+		}
 		frame.getView().repaint();
+		
 	}
 	
 	
@@ -210,7 +247,9 @@ public class DrawingController {
 			if (dlgPoint.isOk()) {
 				Point newState = new Point(Integer.parseInt(dlgPoint.getTxtX()),
 						Integer.parseInt(dlgPoint.getTxtY()), dlgPoint.getColor());
-				model.setShape(index, newState);
+			CmdUpdatePoint cmd = new CmdUpdatePoint(oldState,newState);
+			cmd.execute();
+			frame.getBtnEdgeColor().setBackground(newState.getEdgeColor()); //da se oboji i dugme na frame-u
 				frame.getView().repaint();
 			
 			}
@@ -235,7 +274,10 @@ public class DrawingController {
 						new Point(Integer.parseInt(dlgLine.getTxtEndPointX()),
 								Integer.parseInt(dlgLine.getTxtEndPointY())),
 						dlgLine.getCol());
-				model.setShape(index, newState);
+				CmdUpdateLine  cmd = new CmdUpdateLine(oldState,newState);
+				//cmd.execute();
+				cmd.execute();
+				frame.getBtnEdgeColor().setBackground(newState.getEdgeColor());
 				frame.getView().repaint();
 			
 					}
@@ -260,7 +302,8 @@ public class DrawingController {
 						Integer.parseInt(dlgRectangle.getTxtHeight()),
 						Integer.parseInt(dlgRectangle.getTxtWidth()), dlgRectangle.getInnerColor(),
 						dlgRectangle.getEdgeColor());
-				model.setShape(index, newState);
+				CmdUpdateRectangle cmd = new CmdUpdateRectangle(oldState, newState);
+				cmd.execute();
 				frame.getView().repaint();
 			}
 
@@ -288,7 +331,8 @@ public class DrawingController {
 							Integer.parseInt(dglDonut.getTxtInnerRadius()));
 					newState.setEdgeColor(dglDonut.getEdgeColor());
 					newState.setInnerColor(dglDonut.getInnerColor());
-					model.setShape(index, newState);
+					CmdUpdateDonut cmd = new CmdUpdateDonut(oldState, newState);
+					cmd.execute();
 					frame.getView().repaint();
 					
 				} catch (NumberFormatException e3) {
@@ -320,7 +364,8 @@ public class DrawingController {
 								Integer.parseInt(dlgCircle.getTxtYCoordinate())),
 						Integer.parseInt(dlgCircle.getTxtRadius()), dlgCircle.getInnerColor(),
 						dlgCircle.getEdgeColor());
-				model.setShape(index, newState);
+				CmdUpdateCircle cmd = new CmdUpdateCircle(oldState, newState);
+				cmd.execute();
 				frame.getView().repaint();
 				}	
 			
@@ -344,10 +389,17 @@ public class DrawingController {
 						new Point(Integer.parseInt(dlgHexagon.getTxtXCoordinate()),
 								Integer.parseInt(dlgHexagon.getTxtYCoordinate())),
 						Integer.parseInt(dlgHexagon.getTxtRadius()), dlgHexagon.getInnerColor(),
-						dlgHexagon.getEdgeColor());
-				model.setShape(index, newState);
+					dlgHexagon.getEdgeColor());
+				CmdUpdateHexagon cmd = new CmdUpdateHexagon(oldState, newState);
+				cmd.execute();
 				frame.getView().repaint();
 				}	
 		}
 	}
+	
+	
+	public CmdUndoRedoStack getCmdDeque() {
+		return cmdDeque;
+	}
+
 }

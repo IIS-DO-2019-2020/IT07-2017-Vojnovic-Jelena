@@ -103,6 +103,17 @@ public class Circle extends SurfaceShape {
 	public boolean contains(int x, int y) {
 		return this.getCenter().distance(x, y) <= radius;
 	}
+	
+	public Shape clone() {
+		Circle circle = new Circle();
+		circle.setCenter(new Point(center.getX(),center.getY()));
+		circle.setRadius(getRadius());
+		circle.setEdgeColor(getEdgeColor());
+		circle.setInnerColor(getInnerColor());
+		circle.setSelected(isSelected());
+		return circle;
+	}
+	
 
 	public boolean contains(Point p) {
 		return center.distance(p.getX(), p.getY()) <= radius;

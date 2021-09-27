@@ -86,6 +86,11 @@ public class Point extends Shape {
 		}
 	}
 
+	public Shape clone() {
+		Point point = new Point(getX(), getY(), getEdgeColor());
+		point.setSelected(isSelected());
+		return point;
+	}
 	
 	
 	public int getX() {

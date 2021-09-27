@@ -121,6 +121,14 @@ public class Rectangle extends SurfaceShape {
 		
 	}
 
+	public Shape clone() {
+		Rectangle rectangle = new Rectangle(new Point(getUpperLeftPoint().getX(), getUpperLeftPoint().getY()), getHeight(), getWidth());
+		rectangle.setEdgeColor(getEdgeColor());
+		rectangle.setInnerColor(getInnerColor());
+		rectangle.setSelected(isSelected());
+		
+		return rectangle;
+	}
 	
 	
 	public int area() {

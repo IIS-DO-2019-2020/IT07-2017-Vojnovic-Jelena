@@ -3,7 +3,7 @@ package shapes;
 import java.awt.Color;
 import java.awt.Graphics;
 
-public abstract class Shape implements Moveable, Comparable<Object> {
+public abstract class Shape implements Moveable, Comparable<Object>, Cloneable {
 	
 	private boolean selected = false;
 	private Color edgeColor;

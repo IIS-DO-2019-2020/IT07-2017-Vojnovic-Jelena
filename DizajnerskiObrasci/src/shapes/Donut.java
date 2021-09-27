@@ -119,6 +119,22 @@ public class Donut extends Circle {
 			throw new Exception();
 	}
 
+	
+	public Shape clone() {
 
+		Donut d = new Donut();
+		d.setCenter(this.getCenter());
+		d.setRadius(this.getRadius());
+		try {
+			d.setInnerRadius(this.getInnerRadius());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			throw new NumberFormatException("Inner radius has to be greater than radius!");
+		}
+		d.setEdgeColor(this.getEdgeColor());
+		d.setInnerColor(this.getInnerColor());
+
+		return d;
+	}
 
 }
