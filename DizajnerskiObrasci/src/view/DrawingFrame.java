@@ -165,7 +165,12 @@ public class DrawingFrame extends JFrame {
 		btnFront.setMinimumSize(new Dimension(75, 25));
 		btnFront.setMaximumSize(new Dimension(75, 25));
 		btnFront.setEnabled(true);
-		//
+		btnFront.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controller.front();
+			}
+		});
 		toolBar_1.add(btnFront);
 		
 		btnBack = new JButton("Back");
@@ -173,7 +178,12 @@ public class DrawingFrame extends JFrame {
 		btnBack.setMinimumSize(new Dimension(75, 25));
 		btnBack.setMaximumSize(new Dimension(75, 25));
 		btnBack.setEnabled(true);
-		//
+		btnBack.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controller.back();
+			}
+		});
 		toolBar_1.add(btnBack);
 		
 		btnToFront = new JButton("To Front");
@@ -181,7 +191,12 @@ public class DrawingFrame extends JFrame {
 		btnToFront.setMinimumSize(new Dimension(75, 25));
 		btnToFront.setMaximumSize(new Dimension(75, 25));
 		btnToFront.setEnabled(true);
-		//
+		btnToFront.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controller.toFront();
+			}
+		});
 		toolBar_1.add(btnToFront);
 		
 		btnToBack = new JButton("To Back");
@@ -189,7 +204,12 @@ public class DrawingFrame extends JFrame {
 		btnToBack.setMinimumSize(new Dimension(75, 25));
 		btnToBack.setMaximumSize(new Dimension(75, 25));
 		btnToBack.setEnabled(true);
-		//
+		btnToBack.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controller.toBack();
+			}
+		});
 		toolBar_1.add(btnToBack);
 		
 		separator = new JSeparator();

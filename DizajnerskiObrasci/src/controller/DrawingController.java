@@ -9,7 +9,11 @@ import javax.swing.JOptionPane;
 
 import adapter.HexagonAdapter;
 import command.CmdAddShape;
+import command.CmdBringToBack;
+import command.CmdBringToFront;
 import command.CmdDeleteShapes;
+import command.CmdToBack;
+import command.CmdToFront;
 import command.CmdUndoRedoStack;
 import command.CmdUpdateCircle;
 import command.CmdUpdateDonut;
@@ -397,6 +401,57 @@ public class DrawingController {
 		}
 	}
 	
+	//TO BACK
+	public void back() {
+		int index = model.getSelected();
+ 		Shape selectedShape = model.getShape(index);
+
+ 		if(index==0) return;
+		CmdToBack cmd = new CmdToBack(selectedShape, model);
+		cmd.execute();
+		cmdDeque.getUndoDeque().offerLast(cmd);
+		frame.getView().repaint();
+	}
+
+	//TO FRONT
+	public void front() {
+		int index = model.getSelected();
+ 		Shape selectedShape = model.getShape(index);
+ 		if(index== model.getShapes().size()-1) return;
+ 		
+		CmdToFront cmd = new CmdToFront(selectedShape, model);
+		cmd.execute();
+		cmdDeque.getUndoDeque().offerLast(cmd);
+		frame.getView().repaint();
+	}
+	
+	//BRING TO FRONT
+	public void toFront() {
+		int index = model.getSelected();
+ 		Shape selectedShape = model.getShape(index);
+
+ 		if(index== model.getShapes().size()-1) return;
+ 		
+ 		CmdBringToFront cmd = new CmdBringToFront(selectedShape,model);
+		cmd.execute();
+		cmdDeque.getUndoDeque().offerLast(cmd);
+		frame.getView().repaint();
+	}
+	
+	//BRING TO BACK
+	public void toBack() {
+		int index=model.getSelected();
+ 		Shape selectedShape = model.getShape(index);
+
+ 		if(index==0) return;
+ 		
+ 		CmdBringToBack cmd = new CmdBringToBack(selectedShape, model);
+		cmd.execute();
+		cmdDeque.getUndoDeque().offerLast(cmd);
+		frame.getView().repaint();
+ 		
+ 		
+	}
 	
 	public CmdUndoRedoStack getCmdDeque() {
 		return cmdDeque;
