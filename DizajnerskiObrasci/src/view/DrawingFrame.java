@@ -8,6 +8,7 @@ import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -164,7 +165,7 @@ public class DrawingFrame extends JFrame {
 		btnFront.setPreferredSize(new Dimension(75, 25));
 		btnFront.setMinimumSize(new Dimension(75, 25));
 		btnFront.setMaximumSize(new Dimension(75, 25));
-		btnFront.setEnabled(true);
+		btnFront.setEnabled(false);
 		btnFront.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -177,7 +178,7 @@ public class DrawingFrame extends JFrame {
 		btnBack.setPreferredSize(new Dimension(75, 25));
 		btnBack.setMinimumSize(new Dimension(75, 25));
 		btnBack.setMaximumSize(new Dimension(75, 25));
-		btnBack.setEnabled(true);
+		btnBack.setEnabled(false);
 		btnBack.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -190,7 +191,7 @@ public class DrawingFrame extends JFrame {
 		btnToFront.setPreferredSize(new Dimension(75, 25));
 		btnToFront.setMinimumSize(new Dimension(75, 25));
 		btnToFront.setMaximumSize(new Dimension(75, 25));
-		btnToFront.setEnabled(true);
+		btnToFront.setEnabled(false);
 		btnToFront.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -203,7 +204,7 @@ public class DrawingFrame extends JFrame {
 		btnToBack.setPreferredSize(new Dimension(75, 25));
 		btnToBack.setMinimumSize(new Dimension(75, 25));
 		btnToBack.setMaximumSize(new Dimension(75, 25));
-		btnToBack.setEnabled(true);
+		btnToBack.setEnabled(false);
 		btnToBack.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -245,7 +246,7 @@ public class DrawingFrame extends JFrame {
 		btnEdit.setPreferredSize(new Dimension(60, 25));
 		btnEdit.setMinimumSize(new Dimension(60, 25));
 		btnEdit.setMaximumSize(new Dimension(60, 25));
-		btnEdit.setEnabled(true);
+		btnEdit.setEnabled(false);
 		btnEdit.addActionListener(new ActionListener() {
 
 			@Override
@@ -260,7 +261,7 @@ public class DrawingFrame extends JFrame {
 		btnDelete.setPreferredSize(new Dimension(75, 25));
 		btnDelete.setMinimumSize(new Dimension(75, 25));
 		btnDelete.setMaximumSize(new Dimension(75, 25));
-		btnDelete.setEnabled(true);
+		btnDelete.setEnabled(false);
 		
 		btnDelete.addActionListener(new ActionListener() {
 
@@ -275,13 +276,77 @@ public class DrawingFrame extends JFrame {
 		buttonGroup.add(btnDelete);
 		
 		btnUndo = new JButton("Undo");
-		btnUndo.setEnabled(false);
+		btnUndo.setEnabled(true);
+		btnUndo.addMouseListener(new MouseListener() {
+			
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				controller.undo();
+				btnRedo.setEnabled(true);
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 
 		northPanel.add(btnUndo);
 		
 		
 		btnRedo = new JButton("Redo");
-		btnRedo.setEnabled(false);
+		btnRedo.setEnabled(true);
+		btnRedo.addMouseListener(new MouseListener() {
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				controller.redo();
+				btnUndo.setEnabled(true);
+			}
+		});
 		
 		
 		northPanel.add(btnRedo);
