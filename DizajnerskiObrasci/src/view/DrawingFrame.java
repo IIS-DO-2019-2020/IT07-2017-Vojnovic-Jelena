@@ -277,7 +277,7 @@ public class DrawingFrame extends JFrame {
 		buttonGroup.add(btnDelete);
 		
 		btnUndo = new JButton("Undo");
-		btnUndo.setEnabled(true);
+		btnUndo.setEnabled(false);
 		btnUndo.addMouseListener(new MouseListener() {
 			
 			@Override
@@ -315,7 +315,7 @@ public class DrawingFrame extends JFrame {
 		
 		
 		btnRedo = new JButton("Redo");
-		btnRedo.setEnabled(true);
+		btnRedo.setEnabled(false);
 		btnRedo.addMouseListener(new MouseListener() {
 
 			@Override

@@ -113,6 +113,9 @@ public class DrawingController {
 				CmdAddShape cmd = new CmdAddShape(model, point);
 				cmd.execute();
 				cmdDeque.getUndoDeque().offerLast(cmd); //smestam oblik u listu
+				frame.getBtnUndo().setEnabled(true);
+				frame.getBtnRedo().setEnabled(false);
+				frame.getBtnEdgeColor().setBackground(point.getEdgeColor());
 				frame.getView().repaint();
 				return;
 				
@@ -124,6 +127,9 @@ public class DrawingController {
 					CmdAddShape cmd = new CmdAddShape(model, line);
 					cmdDeque.getUndoDeque().offerLast(cmd);
 					cmd.execute();
+					frame.getBtnUndo().setEnabled(true);
+					frame.getBtnRedo().setEnabled(false);
+					frame.getBtnEdgeColor().setBackground(line.getEdgeColor());
 					
 					lineWaitingForSecondPoint=false;
 					frame.getView().repaint();
@@ -157,6 +163,8 @@ public class DrawingController {
 					CmdAddShape cmd = new CmdAddShape(model, rectangle);
 					cmd.execute();
 					cmdDeque.getUndoDeque().offerLast(cmd);
+					frame.getBtnUndo().setEnabled(true);
+					frame.getBtnRedo().setEnabled(false);
 					frame.getView().repaint();
 					
 				}
@@ -184,6 +192,8 @@ public class DrawingController {
 					CmdAddShape cmd = new CmdAddShape(model, circle);
 					cmd.execute();
 					cmdDeque.getUndoDeque().offerLast(cmd);
+					frame.getBtnUndo().setEnabled(true);
+					frame.getBtnRedo().setEnabled(false);
 					frame.getView().repaint();
 				}
 			} else if(frame.getBtnDonut().isSelected()) {
@@ -210,6 +220,8 @@ public class DrawingController {
 					CmdAddShape cmd = new CmdAddShape(model, donut);
 					cmd.execute();
 					cmdDeque.getUndoDeque().offerLast(cmd);
+					frame.getBtnUndo().setEnabled(true);
+					frame.getBtnRedo().setEnabled(false);
 					frame.getView().repaint();
 					} 
 				}catch (Exception e1) {
@@ -239,6 +251,8 @@ public class DrawingController {
 					CmdAddShape cmd = new CmdAddShape(model, hexagon);
 					cmd.execute();
 					cmdDeque.getUndoDeque().offerLast(cmd);
+					frame.getBtnUndo().setEnabled(true);
+					frame.getBtnRedo().setEnabled(false);
 					frame.getView().repaint();
 				}
 			}
@@ -368,6 +382,8 @@ public class DrawingController {
 				CmdUpdateRectangle cmd = new CmdUpdateRectangle(oldState, newState);
 				cmd.execute();
 				cmdDeque.getUndoDeque().offerLast(cmd);
+				frame.getBtnEdgeColor().setBackground(newState.getEdgeColor());
+				frame.getBtnInnerColor().setBackground(newState.getInnerColor());
 				frame.getView().repaint();
 			}
 
@@ -398,6 +414,8 @@ public class DrawingController {
 					CmdUpdateDonut cmd = new CmdUpdateDonut(oldState, newState);
 					cmd.execute();
 					cmdDeque.getUndoDeque().offerLast(cmd);
+					frame.getBtnEdgeColor().setBackground(newState.getEdgeColor());
+					frame.getBtnInnerColor().setBackground(newState.getInnerColor());
 					frame.getView().repaint();
 					
 				} catch (NumberFormatException e3) {
@@ -432,6 +450,8 @@ public class DrawingController {
 				CmdUpdateCircle cmd = new CmdUpdateCircle(oldState, newState);
 				cmd.execute();
 				cmdDeque.getUndoDeque().offerLast(cmd);
+				frame.getBtnEdgeColor().setBackground(newState.getEdgeColor());
+				frame.getBtnInnerColor().setBackground(newState.getInnerColor());
 				frame.getView().repaint();
 				}	
 			
@@ -459,6 +479,8 @@ public class DrawingController {
 				CmdUpdateHexagon cmd = new CmdUpdateHexagon(oldState, newState);
 				cmd.execute();
 				cmdDeque.getUndoDeque().offerLast(cmd);
+				frame.getBtnEdgeColor().setBackground(newState.getEdgeColor());
+				frame.getBtnInnerColor().setBackground(newState.getInnerColor());
 				frame.getView().repaint();
 				}	
 		}
