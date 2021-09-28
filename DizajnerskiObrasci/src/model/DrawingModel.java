@@ -17,15 +17,15 @@ public class DrawingModel {
 	public List<Shape> getSelectedShapes() {
 		return selectedShapes;
 	}*/
+	ArrayList<Shape> selectedShapes = new ArrayList<Shape>();
 	
 	public ArrayList<Shape> getSelectedShapes() {
-		
-		ArrayList<Shape> selectedShapes = new ArrayList<Shape>();
-		
+		/*
 		shapes.forEach(shape -> {
 			if(shape.isSelected())
 				selectedShapes.add(shape);
 		});
+		*/
 		return selectedShapes;
 	}
 	

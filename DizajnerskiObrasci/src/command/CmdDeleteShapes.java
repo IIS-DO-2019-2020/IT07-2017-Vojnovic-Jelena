@@ -19,6 +19,7 @@ public class CmdDeleteShapes implements Command {
 	public void execute() {
 		shapesForDelete.forEach(shape -> {
 			model.remove(shape);
+			shape.setSelected(false);
 		});
 		
 	}

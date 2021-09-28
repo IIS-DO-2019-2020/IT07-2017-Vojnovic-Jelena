@@ -2,7 +2,6 @@ package controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.ListIterator;
 
 import javax.swing.JFrame;
@@ -12,7 +11,14 @@ import adapter.HexagonAdapter;
 import command.CmdAddShape;
 import command.CmdBringToBack;
 import command.CmdBringToFront;
-import command.CmdDeleteShapes;
+import command.CmdCircleRemove;
+import command.CmdDeselectShape;
+import command.CmdDonutRemove;
+import command.CmdHexagonRemove;
+import command.CmdLineRemove;
+import command.CmdPointRemove;
+import command.CmdRectangleRemove;
+import command.CmdSelectShape;
 import command.CmdToBack;
 import command.CmdToFront;
 import command.CmdUndoRedoStack;
@@ -29,6 +35,8 @@ import dialogs.DlgLine;
 import dialogs.DlgPoint;
 import dialogs.DlgRectangle;
 import model.DrawingModel;
+import observer.EnablingButtonsObserver;
+import observer.EnablingButtonsObserverUpdate;
 import shapes.Circle;
 import shapes.Donut;
 import shapes.Line;
@@ -54,34 +62,43 @@ public class DrawingController {
 	
 	private CmdUndoRedoStack cmdDeque = new CmdUndoRedoStack();
 	
-
+	//OBSERVER
+		private EnablingButtonsObserver buttonsObserver = new EnablingButtonsObserver();
+		private EnablingButtonsObserverUpdate buttonsObserverUpdate;
 	
 	public DrawingController(DrawingModel model, DrawingFrame frame) {
 		this.model=model;
 		this.frame=frame;
-
+		
+		buttonsObserverUpdate = new EnablingButtonsObserverUpdate(frame);
+		buttonsObserver.addPropertyChangeListener(buttonsObserverUpdate);
 	}
 	
 	public void mouseClicked(MouseEvent e){
 		
 		Point mouseClick = new Point (e.getX(), e.getY());
 
-		
 		//SELEKCIJA
-		if(frame.getBtnSelect().isSelected()) {
+		if (frame.getBtnSelect().isSelected()) {
 			ListIterator<Shape> it = model.getShapes().listIterator();
 			while (it.hasNext()) {
 				selectedShape = it.next();
 				if (selectedShape.contains(mouseClick.getX(), mouseClick.getY())) {
-					if(selectedShape.isSelected()) {
-						selectedShape.setSelected(false); // ukoliko je vec selektovano - deselektuj
-					}else	{
-						selectedShape.setSelected(true); // ukoliko nije selektovano - selektuj
-						}
+					if (selectedShape.isSelected() == false) { // oblik nije vec selektovan -> selektuj
+						CmdSelectShape cmdSelect = new CmdSelectShape(model, selectedShape);
+						cmdSelect.execute();
+						cmdDeque.getUndoDeque().offerLast(cmdSelect);
+
+					} else { // oblik je vec selektovan --> deselect
+						CmdDeselectShape cmdDeselect = new CmdDeselectShape(model, selectedShape);
+						cmdDeselect.execute();
+						frame.getBtnUndo().setEnabled(true);
+						frame.getBtnRedo().setEnabled(false);
+						cmdDeque.getUndoDeque().offerLast(cmdDeselect);
 					}
-				frame.getView().repaint();
 				}
-			
+				frame.getView().repaint();
+			} 
 		}
 		else 
 		{
@@ -226,20 +243,51 @@ public class DrawingController {
 				}
 			}
 		}
-		
+		enablingEditAndDeleteButtons();
 	}
 	
-	//BRISANJE
-	public void delete(ActionEvent e) {
- 		if (model.isEmpty()) return;
-		if (JOptionPane.showConfirmDialog(null, "Da li zaista zelite da obrisete selektovane oblike?", "Potvrda", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == 0) {
-			CmdDeleteShapes cmdDeleteShapes = new CmdDeleteShapes(model, model.getSelectedShapes());
-			cmdDeleteShapes.execute();
-			cmdDeque.getUndoDeque().offerLast(cmdDeleteShapes);
+	// BRISANJE
+		public void delete(ActionEvent arg0) {
+			if (model.getSelectedShapes().size() != 0) {
+				if (JOptionPane.showConfirmDialog(new JFrame(), "Please confirm deletion.", "Confirm",
+						JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+					for (int i = model.getSelectedShapes().size() - 1; i >= 0; i--) {
+						if (model.getSelectedShapes().get(i) instanceof Point) {
+							CmdPointRemove cmd = new CmdPointRemove(model, (Point) model.getSelectedShapes().get(i));
+							cmd.execute();
+							cmdDeque.getUndoDeque().offerLast(cmd);
+						} else if (model.getSelectedShapes().get(i) instanceof Line) {
+							CmdLineRemove cmd = new CmdLineRemove(model, (Line) model.getSelectedShapes().get(i));
+							cmd.execute();
+							cmdDeque.getUndoDeque().offerLast(cmd);
+						} else if (model.getSelectedShapes().get(i) instanceof Rectangle) {
+							CmdRectangleRemove cmd = new CmdRectangleRemove(model,
+									(Rectangle) model.getSelectedShapes().get(i));
+							cmd.execute();
+							cmdDeque.getUndoDeque().offerLast(cmd);
+						} else if (model.getSelectedShapes().get(i) instanceof Circle) {
+							CmdCircleRemove cmd = new CmdCircleRemove(model, (Circle) model.getSelectedShapes().get(i));
+							cmd.execute();
+							cmdDeque.getUndoDeque().offerLast(cmd);
+						} else if (model.getSelectedShapes().get(i) instanceof Donut) {
+							CmdDonutRemove cmd = new CmdDonutRemove(model, (Donut) model.getSelectedShapes().get(i));
+							cmd.execute();
+							cmdDeque.getUndoDeque().offerLast(cmd);
+						} else if (model.getSelectedShapes().get(i) instanceof HexagonAdapter) {
+							CmdHexagonRemove cmd = new CmdHexagonRemove(model,
+									(HexagonAdapter) model.getSelectedShapes().get(i));
+							cmd.execute();
+							cmdDeque.getUndoDeque().offerLast(cmd);
+						}
+						frame.getView().repaint();
+						model.getSelectedShapes().remove(i);
+						enablingEditAndDeleteButtons();
+						frame.getBtnUndo().setEnabled(true);
+						frame.getBtnRedo().setEnabled(false);
+					}
+				}
+			}
 		}
-		frame.getView().repaint();
-		
-	}
 	
 	
 	//MODIFIKACIJA
@@ -415,6 +463,7 @@ public class DrawingController {
 				}	
 		}
 		frame.getView().repaint();
+		//enablingEditAndDeleteButtons();
 	}
 	
 	//TO BACK
@@ -491,7 +540,39 @@ public class DrawingController {
 		}
 	}
 	
-	
+	//OBSERVER
+	public void enablingEditAndDeleteButtons() {
+		if (model.getSelectedShapes().size() != 0) {
+			
+			if (model.getSelectedShapes().size() == 1) {
+				buttonsObserver.setEditEnabled(true);
+				
+				buttonsObserver.setBringToBackEnabled(true);
+				buttonsObserver.setBringToFrontEnabled(true);
+				buttonsObserver.setToBackEnabled(true);
+				buttonsObserver.setToFrontEnabled(true);
+				
+				
+			} else {
+				buttonsObserver.setEditEnabled(false);
+
+				buttonsObserver.setBringToBackEnabled(false);
+				buttonsObserver.setBringToFrontEnabled(false);
+				buttonsObserver.setToBackEnabled(false);
+				buttonsObserver.setToFrontEnabled(false);
+			}
+			buttonsObserver.setDeleteEnabled(true);
+		} else {
+			buttonsObserver.setDeleteEnabled(false);
+			buttonsObserver.setEditEnabled(false);
+
+			buttonsObserver.setBringToBackEnabled(false);
+			buttonsObserver.setBringToFrontEnabled(false);
+			buttonsObserver.setToBackEnabled(false);
+			buttonsObserver.setToFrontEnabled(false);
+		}
+	}
+
 	public CmdUndoRedoStack getCmdDeque() {
 		return cmdDeque;
 	}

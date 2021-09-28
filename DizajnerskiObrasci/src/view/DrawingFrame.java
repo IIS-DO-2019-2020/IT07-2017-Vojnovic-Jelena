@@ -247,6 +247,7 @@ public class DrawingFrame extends JFrame {
 		btnEdit.setMinimumSize(new Dimension(60, 25));
 		btnEdit.setMaximumSize(new Dimension(60, 25));
 		btnEdit.setEnabled(false);
+		
 		btnEdit.addActionListener(new ActionListener() {
 
 			@Override
