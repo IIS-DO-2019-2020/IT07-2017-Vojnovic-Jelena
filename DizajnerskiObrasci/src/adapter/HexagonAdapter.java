@@ -10,6 +10,10 @@ import shapes.SurfaceShape;
 
 public class HexagonAdapter extends SurfaceShape {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Hexagon hexagon;
 	
 	public HexagonAdapter() {

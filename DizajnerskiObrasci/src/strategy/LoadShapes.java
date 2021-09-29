@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 public class LoadShapes implements Load{
 
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public ArrayList<Object> loadData(String path) {

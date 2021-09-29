@@ -68,9 +68,6 @@ public class DrawingController {
 	private DrawingModel model;
 	private DrawingFrame frame;
 	
-	/////
-	private Point firstPoint;
-	
 	private DlgPoint dlgPoint = new DlgPoint();
 	private DlgLine dlgLine = new DlgLine();
 	
@@ -838,7 +835,6 @@ public class DrawingController {
 		}
 		frame.getView().repaint();
 	}
-	
 	//EXECUTE LOG
 	public void executeLog() {
 		if (logCounter < logList.size()) {

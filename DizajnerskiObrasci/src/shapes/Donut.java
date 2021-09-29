@@ -8,6 +8,10 @@ import java.awt.geom.Ellipse2D;
 
 public class Donut extends Circle {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private int innerRadius;
 
 
