@@ -22,7 +22,7 @@ public class CmdUpdateLine implements Command {
 		oldState.getEndPoint().setX(newState.getEndPoint().getX());
 		oldState.getEndPoint().setY(newState.getEndPoint().getY());
 		oldState.setEdgeColor(newState.getEdgeColor());
-		oldState.setSelected(newState.isSelected());
+		//oldState.setSelected(true);
 		
 
 		
@@ -36,7 +36,7 @@ public class CmdUpdateLine implements Command {
 		oldState.getEndPoint().setX(original.getEndPoint().getX());
 		oldState.getEndPoint().setY(original.getEndPoint().getY());
 		oldState.setEdgeColor(original.getEdgeColor());
-		oldState.setSelected(original.isSelected());
+		//oldState.setSelected(true);
 		
 	}
 	

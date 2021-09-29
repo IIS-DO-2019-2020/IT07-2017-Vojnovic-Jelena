@@ -21,7 +21,7 @@ public class CmdUpdateCircle implements Command {
 		oldState.setRadius(newState.getRadius());
 		oldState.setEdgeColor(newState.getEdgeColor());
 		oldState.setInnerColor(newState.getInnerColor());
-		oldState.setSelected(newState.isSelected());
+		//oldState.setSelected(newState.isSelected());
 		
 	}
 
@@ -32,7 +32,7 @@ public class CmdUpdateCircle implements Command {
 		oldState.setRadius(original.getRadius());
 		oldState.setEdgeColor(original.getEdgeColor());
 		oldState.setInnerColor(original.getInnerColor());
-		oldState.setSelected(original.isSelected());
+		//oldState.setSelected(original.isSelected());
 		
 	}
 

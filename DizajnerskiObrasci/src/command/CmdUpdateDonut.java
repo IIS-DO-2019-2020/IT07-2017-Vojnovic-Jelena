@@ -27,7 +27,7 @@ public class CmdUpdateDonut implements Command {
 		}
 		oldState.setEdgeColor(newState.getEdgeColor());
 		oldState.setInnerColor(newState.getInnerColor());
-		oldState.setSelected(newState.isSelected());
+		//oldState.setSelected(newState.isSelected());
 		
 		
 	}
@@ -45,7 +45,7 @@ public class CmdUpdateDonut implements Command {
 		}
 		oldState.setEdgeColor(original.getEdgeColor());
 		oldState.setInnerColor(original.getInnerColor());
-		oldState.setSelected(original.isSelected());
+		//oldState.setSelected(original.isSelected());
 		
 	}
 	

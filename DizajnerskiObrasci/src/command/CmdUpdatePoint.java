@@ -19,7 +19,7 @@ public class CmdUpdatePoint implements Command {
 		oldState.setX(newState.getX());
 		oldState.setY(newState.getY());
 		oldState.setEdgeColor(newState.getEdgeColor());
-		oldState.setSelected(newState.isSelected());
+		//oldState.setSelected(newState.isSelected());
 		
 	}
 
@@ -28,7 +28,7 @@ public class CmdUpdatePoint implements Command {
 		oldState.setX(original.getX());
 		oldState.setY(original.getY());
 		oldState.setEdgeColor(original.getEdgeColor());
-		oldState.setSelected(original.isSelected());
+		//oldState.setSelected(original.isSelected());
 		
 	}
 	

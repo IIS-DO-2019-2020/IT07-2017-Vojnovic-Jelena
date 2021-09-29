@@ -131,7 +131,9 @@ public class DrawingController {
 				}
 				frame.getView().repaint();
 			} 
-		}
+		} 
+	
+			
 		else 
 		{
 			//CRTANJE

@@ -22,7 +22,7 @@ public class CmdUpdateRectangle implements Command{
 		oldState.setHeight(newState.getHeight());
 		oldState.setEdgeColor(newState.getEdgeColor());
 		oldState.setInnerColor(newState.getInnerColor());
-		oldState.setSelected(newState.isSelected());
+		//oldState.setSelected(true);
 		
 	}
 
@@ -34,7 +34,7 @@ public class CmdUpdateRectangle implements Command{
 		oldState.setHeight(original.getHeight());
 		oldState.setEdgeColor(original.getEdgeColor());
 		oldState.setInnerColor(original.getInnerColor());
-		oldState.setSelected(original.isSelected());
+		//oldState.setSelected(true);
 		
 	}
 	

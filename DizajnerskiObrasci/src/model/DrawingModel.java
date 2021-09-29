@@ -19,7 +19,7 @@ public class DrawingModel {
 	}*/
 	ArrayList<Shape> selectedShapes = new ArrayList<Shape>();
 	
-	public ArrayList<Shape> getSelectedShapes() {
+	public List<Shape> getSelectedShapes() {
 		/*
 		shapes.forEach(shape -> {
 			if(shape.isSelected())
