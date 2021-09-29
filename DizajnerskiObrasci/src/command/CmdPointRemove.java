@@ -21,4 +21,9 @@ public class CmdPointRemove implements Command {
 	public void unexecute() {
 		model.add(point);
 	}
+	
+	@Override
+	public String log() {
+		return "Deleted: " + point.toString();
+	}
 }

@@ -114,6 +114,11 @@ public class Circle extends SurfaceShape {
 		return circle;
 	}
 	
+	public String toString() {
+		return "Circle: (" + center.getX() + ", " + center.getY() + ") " + "radius = " + radius + "; inner color {"
+				+ Integer.toString(getInnerColor().getRGB()) + "}, edge color {"
+				+ Integer.toString(getEdgeColor().getRGB()) + "}";
+	}
 
 	public boolean contains(Point p) {
 		return center.distance(p.getX(), p.getY()) <= radius;

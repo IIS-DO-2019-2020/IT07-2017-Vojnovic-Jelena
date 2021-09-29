@@ -1,17 +1,28 @@
 package controller;
 
+import java.awt.Color;
+import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.ListIterator;
 
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.filechooser.FileSystemView;
 
 import adapter.HexagonAdapter;
 import command.CmdAddShape;
 import command.CmdBringToBack;
 import command.CmdBringToFront;
 import command.CmdCircleRemove;
+import command.CmdDeleteShapes;
 import command.CmdDeselectShape;
 import command.CmdDonutRemove;
 import command.CmdHexagonRemove;
@@ -43,6 +54,12 @@ import shapes.Line;
 import shapes.Point;
 import shapes.Rectangle;
 import shapes.Shape;
+import strategy.LoadLog;
+import strategy.LoadManager;
+import strategy.LoadShapes;
+import strategy.SaveLog;
+import strategy.SaveManager;
+import strategy.SaveShapes;
 import view.DrawingFrame;
 
 
@@ -63,8 +80,22 @@ public class DrawingController {
 	private CmdUndoRedoStack cmdDeque = new CmdUndoRedoStack();
 	
 	//OBSERVER
-		private EnablingButtonsObserver buttonsObserver = new EnablingButtonsObserver();
-		private EnablingButtonsObserverUpdate buttonsObserverUpdate;
+	private EnablingButtonsObserver buttonsObserver = new EnablingButtonsObserver();
+	private EnablingButtonsObserverUpdate buttonsObserverUpdate;
+	
+	
+	//LOG
+	private SaveManager saveManager;
+	private SaveManager saveLog;
+	private LoadManager loadManager;
+	
+	private JFileChooser fileChooser;
+	
+	private String logLine="";
+	private ArrayList<String> logList = new ArrayList<String>();
+	private int logCounter =0;
+	private Shape shape = null;
+	
 	
 	public DrawingController(DrawingModel model, DrawingFrame frame) {
 		this.model=model;
@@ -88,6 +119,7 @@ public class DrawingController {
 						CmdSelectShape cmdSelect = new CmdSelectShape(model, selectedShape);
 						cmdSelect.execute();
 						cmdDeque.getUndoDeque().offerLast(cmdSelect);
+						frame.getTextArea().append(cmdSelect.log() + "\n");
 
 					} else { // oblik je vec selektovan --> deselect
 						CmdDeselectShape cmdDeselect = new CmdDeselectShape(model, selectedShape);
@@ -95,6 +127,7 @@ public class DrawingController {
 						frame.getBtnUndo().setEnabled(true);
 						frame.getBtnRedo().setEnabled(false);
 						cmdDeque.getUndoDeque().offerLast(cmdDeselect);
+						frame.getTextArea().append(cmdDeselect.log() + "\n");
 					}
 				}
 				frame.getView().repaint();
@@ -115,6 +148,7 @@ public class DrawingController {
 				cmdDeque.getUndoDeque().offerLast(cmd); //smestam oblik u listu
 				frame.getBtnUndo().setEnabled(true);
 				frame.getBtnRedo().setEnabled(false);
+				frame.getTextArea().append(cmd.log() + "\n");
 				frame.getBtnEdgeColor().setBackground(point.getEdgeColor());
 				frame.getView().repaint();
 				return;
@@ -129,6 +163,7 @@ public class DrawingController {
 					cmd.execute();
 					frame.getBtnUndo().setEnabled(true);
 					frame.getBtnRedo().setEnabled(false);
+					frame.getTextArea().append(cmd.log() + "\n");
 					frame.getBtnEdgeColor().setBackground(line.getEdgeColor());
 					
 					lineWaitingForSecondPoint=false;
@@ -165,6 +200,7 @@ public class DrawingController {
 					cmdDeque.getUndoDeque().offerLast(cmd);
 					frame.getBtnUndo().setEnabled(true);
 					frame.getBtnRedo().setEnabled(false);
+					frame.getTextArea().append(cmd.log() + "\n");
 					frame.getView().repaint();
 					
 				}
@@ -194,6 +230,7 @@ public class DrawingController {
 					cmdDeque.getUndoDeque().offerLast(cmd);
 					frame.getBtnUndo().setEnabled(true);
 					frame.getBtnRedo().setEnabled(false);
+					frame.getTextArea().append(cmd.log() + "\n");
 					frame.getView().repaint();
 				}
 			} else if(frame.getBtnDonut().isSelected()) {
@@ -222,6 +259,7 @@ public class DrawingController {
 					cmdDeque.getUndoDeque().offerLast(cmd);
 					frame.getBtnUndo().setEnabled(true);
 					frame.getBtnRedo().setEnabled(false);
+					frame.getTextArea().append(cmd.log() + "\n");
 					frame.getView().repaint();
 					} 
 				}catch (Exception e1) {
@@ -253,10 +291,12 @@ public class DrawingController {
 					cmdDeque.getUndoDeque().offerLast(cmd);
 					frame.getBtnUndo().setEnabled(true);
 					frame.getBtnRedo().setEnabled(false);
+					frame.getTextArea().append(cmd.log() + "\n");
 					frame.getView().repaint();
 				}
 			}
 		}
+		redoCleaner();
 		enablingEditAndDeleteButtons();
 	}
 	
@@ -270,29 +310,36 @@ public class DrawingController {
 							CmdPointRemove cmd = new CmdPointRemove(model, (Point) model.getSelectedShapes().get(i));
 							cmd.execute();
 							cmdDeque.getUndoDeque().offerLast(cmd);
+							frame.getTextArea().append(cmd.log() + "\n");
 						} else if (model.getSelectedShapes().get(i) instanceof Line) {
 							CmdLineRemove cmd = new CmdLineRemove(model, (Line) model.getSelectedShapes().get(i));
 							cmd.execute();
 							cmdDeque.getUndoDeque().offerLast(cmd);
+							frame.getTextArea().append(cmd.log() + "\n");
 						} else if (model.getSelectedShapes().get(i) instanceof Rectangle) {
 							CmdRectangleRemove cmd = new CmdRectangleRemove(model,
 									(Rectangle) model.getSelectedShapes().get(i));
 							cmd.execute();
 							cmdDeque.getUndoDeque().offerLast(cmd);
+							frame.getTextArea().append(cmd.log() + "\n");
 						} else if (model.getSelectedShapes().get(i) instanceof Circle) {
 							CmdCircleRemove cmd = new CmdCircleRemove(model, (Circle) model.getSelectedShapes().get(i));
 							cmd.execute();
 							cmdDeque.getUndoDeque().offerLast(cmd);
+							frame.getTextArea().append(cmd.log() + "\n");
 						} else if (model.getSelectedShapes().get(i) instanceof Donut) {
 							CmdDonutRemove cmd = new CmdDonutRemove(model, (Donut) model.getSelectedShapes().get(i));
 							cmd.execute();
 							cmdDeque.getUndoDeque().offerLast(cmd);
+							frame.getTextArea().append(cmd.log() + "\n");
 						} else if (model.getSelectedShapes().get(i) instanceof HexagonAdapter) {
 							CmdHexagonRemove cmd = new CmdHexagonRemove(model,
 									(HexagonAdapter) model.getSelectedShapes().get(i));
 							cmd.execute();
 							cmdDeque.getUndoDeque().offerLast(cmd);
+							frame.getTextArea().append(cmd.log() + "\n");
 						}
+						redoCleaner();
 						frame.getView().repaint();
 						model.getSelectedShapes().remove(i);
 						enablingEditAndDeleteButtons();
@@ -327,8 +374,8 @@ public class DrawingController {
 			cmd.execute();
 			cmdDeque.getUndoDeque().offerLast(cmd);
 			frame.getBtnEdgeColor().setBackground(newState.getEdgeColor()); //da se oboji i dugme na frame-u
-			frame.getView().repaint();
-			
+			//frame.getView().repaint();
+			frame.getTextArea().append(cmd.log() + "\n");
 			}
 		} else if (shape instanceof Line) {
 			DlgLine dlgLine = new DlgLine();
@@ -355,7 +402,8 @@ public class DrawingController {
 				cmd.execute();
 				cmdDeque.getUndoDeque().offerLast(cmd);
 				frame.getBtnEdgeColor().setBackground(newState.getEdgeColor());
-				frame.getView().repaint();
+				//frame.getView().repaint();
+				frame.getTextArea().append(cmd.log() + "\n");
 			
 					}
 		} else if (shape instanceof Rectangle) {
@@ -384,7 +432,8 @@ public class DrawingController {
 				cmdDeque.getUndoDeque().offerLast(cmd);
 				frame.getBtnEdgeColor().setBackground(newState.getEdgeColor());
 				frame.getBtnInnerColor().setBackground(newState.getInnerColor());
-				frame.getView().repaint();
+				//frame.getView().repaint();
+				frame.getTextArea().append(cmd.log() + "\n");
 			}
 
 					
@@ -416,7 +465,8 @@ public class DrawingController {
 					cmdDeque.getUndoDeque().offerLast(cmd);
 					frame.getBtnEdgeColor().setBackground(newState.getEdgeColor());
 					frame.getBtnInnerColor().setBackground(newState.getInnerColor());
-					frame.getView().repaint();
+					//frame.getView().repaint();
+					frame.getTextArea().append(cmd.log() + "\n");
 					
 				} catch (NumberFormatException e3) {
 					JOptionPane.showMessageDialog(new JFrame(), "Wrong entry!", "Error", JOptionPane.WARNING_MESSAGE);
@@ -452,7 +502,8 @@ public class DrawingController {
 				cmdDeque.getUndoDeque().offerLast(cmd);
 				frame.getBtnEdgeColor().setBackground(newState.getEdgeColor());
 				frame.getBtnInnerColor().setBackground(newState.getInnerColor());
-				frame.getView().repaint();
+				//frame.getView().repaint();
+				frame.getTextArea().append(cmd.log() + "\n");
 				}	
 			
 		} else if (shape instanceof HexagonAdapter) {
@@ -481,9 +532,11 @@ public class DrawingController {
 				cmdDeque.getUndoDeque().offerLast(cmd);
 				frame.getBtnEdgeColor().setBackground(newState.getEdgeColor());
 				frame.getBtnInnerColor().setBackground(newState.getInnerColor());
-				frame.getView().repaint();
+				//frame.getView().repaint();
+				frame.getTextArea().append(cmd.log() + "\n");
 				}	
 		}
+		redoCleaner();
 		frame.getView().repaint();
 		//enablingEditAndDeleteButtons();
 	}
@@ -497,6 +550,8 @@ public class DrawingController {
 		CmdToBack cmd = new CmdToBack(selectedShape, model);
 		cmd.execute();
 		cmdDeque.getUndoDeque().offerLast(cmd);
+		frame.getTextArea().append(cmd.log() + "\n");
+		redoCleaner();
 		frame.getView().repaint();
 	}
 
@@ -509,6 +564,8 @@ public class DrawingController {
 		CmdToFront cmd = new CmdToFront(selectedShape, model);
 		cmd.execute();
 		cmdDeque.getUndoDeque().offerLast(cmd);
+		frame.getTextArea().append(cmd.log() + "\n");
+		redoCleaner();
 		frame.getView().repaint();
 	}
 	
@@ -522,6 +579,8 @@ public class DrawingController {
  		CmdBringToFront cmd = new CmdBringToFront(selectedShape,model);
 		cmd.execute();
 		cmdDeque.getUndoDeque().offerLast(cmd);
+		frame.getTextArea().append(cmd.log() + "\n");
+		redoCleaner();
 		frame.getView().repaint();
 	}
 	
@@ -535,13 +594,21 @@ public class DrawingController {
  		CmdBringToBack cmd = new CmdBringToBack(selectedShape, model);
 		cmd.execute();
 		cmdDeque.getUndoDeque().offerLast(cmd);
+		frame.getTextArea().append(cmd.log() + "\n");
+		redoCleaner();
 		frame.getView().repaint();
 	}
 	
 	//UNDO
 	public void undo() {
 		if (!cmdDeque.getUndoDeque().isEmpty()) {
+			
+			String undoLog = "Undo: " + cmdDeque.getUndoDeque().peekLast().log();
+			frame.getTextArea().append(undoLog + "\n");
 			cmdDeque.unexecute();
+			
+			enablingEditAndDeleteButtons();
+			redoCleaner();
 			frame.getView().repaint();
 			
 			if (cmdDeque.getUndoDeque().size() == 0) {
@@ -553,7 +620,12 @@ public class DrawingController {
 	//REDO
 	public void redo() {
 		if (!cmdDeque.getRedoDeque().isEmpty()) {
+			
+			String redoLog = "Redo: " + cmdDeque.getRedoDeque().peekLast().log();
+			frame.getTextArea().append(redoLog + "\n");
 			cmdDeque.execute();
+			
+			enablingEditAndDeleteButtons();
 			frame.getView().repaint();
 			
 			if (cmdDeque.getRedoDeque().size() == 0) {
@@ -595,6 +667,447 @@ public class DrawingController {
 		}
 	}
 
+	//REDO CLEANER
+	public void redoCleaner() {
+		if (frame.getTextArea().getLineCount() > 2) { // izvrsene barem tri metode
+			// Pokupi sve lines iz text area i smesti u array
+			String[] lines = frame.getTextArea().getText().split("\n");
+			ArrayList<String> linesAsAL = new ArrayList<String>();
+			for (String line : lines) {
+				linesAsAL.add(line);
+			}
+
+			boolean isCommandUndo = linesAsAL.get(linesAsAL.size() - 2).startsWith("Undo"); // pretposlednja komanda -
+																							// Undo
+
+			boolean lastCommand = linesAsAL.get(linesAsAL.size() - 1).contains("Undo:"); // poslednja komanda -
+																							// razlicita od Undo
+
+			if (lastCommand == false && isCommandUndo == true) {
+				cmdDeque.getRedoDeque().clear();
+				// System.out.println("Redo: " + cmdDeque.getRedoDeque().size());
+			}
+		}
+	}
+	
+	//SAVE LOG
+	public void saveLog() {
+
+		String log = frame.getTextArea().getText();
+
+		// saveManager = new SaveManager(new SaveShapes());
+		saveLog = new SaveManager(new SaveLog());
+
+		fileChooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory()); // file explorer
+		fileChooser.setAcceptAllFileFilterUsed(false);
+
+		if (fileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+			File selectedFile = fileChooser.getSelectedFile();
+			String logPath = selectedFile.getAbsolutePath() + ".txt";
+
+			if (logPath != null) {
+				saveLog.saveData(log, logPath);
+			}
+		}
+	}
+	
+	//SAVE DRAWING
+	public void saveDrawing() {
+
+		ArrayList<Object> shapes = new ArrayList<Object>(); // ovde cuvam sve shapes sa panela
+		shapes.add(model.getShapes());
+
+		// Kada cuvam drawing, cuva se i log
+		saveManager = new SaveManager(new SaveShapes());
+		saveLog = new SaveManager(new SaveLog());
+
+		fileChooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory()); // File explorer
+
+		if (fileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+			File selectedFile = fileChooser.getSelectedFile(); // mesto koje je korisnik kliknuo da zeli da mu se tamo
+																// sacuva
+			String drawingPath = selectedFile.getAbsolutePath() + ".bin";
+			String logPath = selectedFile.getAbsolutePath() + ".txt";
+
+			if (drawingPath != null && logPath != null) {
+				saveManager.saveData(shapes, drawingPath);
+				saveLog.saveData(frame.getTextArea().getText(), logPath);
+			}
+		}
+
+	}
+	
+	//LOAD LOG
+	public void loadLog() {
+
+		frame.getTextArea().setText("");
+		model.getShapes().clear();
+		model.getSelectedShapes().clear();
+		cmdDeque.getUndoDeque().clear();
+		cmdDeque.getRedoDeque().clear();
+		frame.getBtnUndo().setEnabled(false);
+		frame.getBtnRedo().setEnabled(false);
+
+		//enablingMovingButtons();
+		enablingEditAndDeleteButtons();
+
+		frame.getBtnExecuteLog().setEnabled(true);
+
+		frame.getBtnInnerColor().setBackground(SystemColor.control);
+		frame.getBtnEdgeColor().setBackground(Color.black);
+
+		loadManager = new LoadManager(new LoadLog());
+		JFileChooser fileChooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+		FileNameExtensionFilter filter = new FileNameExtensionFilter("Text files", "txt");
+		fileChooser.setFileFilter(filter);
+
+		if (fileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
+			String logPath = fileChooser.getSelectedFile().getAbsolutePath();
+			// File Reader cita karaktere fajla i prevodi ih iz binarnog jezika u stringove
+			// A BufferedReaderu prosledjujemo fileReader i oni rade ZAJEDNO
+			FileReader fileReader = (FileReader) loadManager.loadData(logPath);
+			BufferedReader bufferLog = new BufferedReader(fileReader);
+
+			try {
+				while ((logLine = bufferLog.readLine()) != null) {
+					System.out.println(logLine);
+					logList.add(logLine);
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	//LOAD DRAWING
+	@SuppressWarnings("unchecked")
+	public void loadDrawing() {
+
+		frame.getTextArea().setText("");
+		model.getShapes().clear();
+		model.getSelectedShapes().clear();
+		cmdDeque.getUndoDeque().clear();
+		cmdDeque.getRedoDeque().clear();
+		frame.getBtnUndo().setEnabled(false);
+		frame.getBtnRedo().setEnabled(false);
+
+		enablingEditAndDeleteButtons();
+		//enablingMovingButtons();
+
+		frame.getBtnInnerColor().setBackground(SystemColor.control);
+		frame.getBtnEdgeColor().setBackground(Color.black);
+
+		loadManager = new LoadManager(new LoadShapes());
+		fileChooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+
+		// Posto je drawing tipa .bin --> filtriramo prikaz
+		FileNameExtensionFilter filter = new FileNameExtensionFilter("Bin files", "bin");
+		fileChooser.setFileFilter(filter);
+
+		if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+			File selectedFile = fileChooser.getSelectedFile();
+			String drawingPath = selectedFile.getAbsolutePath();
+
+			@SuppressWarnings({})
+			ArrayList<Object> shapes = (ArrayList<Object>) loadManager.loadData(drawingPath);
+			for (Shape s : (ArrayList<Shape>) shapes.get(0)) {
+				model.add(s);
+			}
+		}
+		frame.getView().repaint();
+	}
+	
+	//EXECUTE LOG
+	public void executeLog() {
+		if (logCounter < logList.size()) {
+			logLine = logList.get(logCounter);
+
+			if (logLine.contains("Point")) {
+				int x = Integer.parseInt(logLine.substring(logLine.indexOf("(") + 1, logLine.indexOf(",")));
+				int y = Integer.parseInt(logLine.substring(logLine.indexOf(",") + 2, logLine.indexOf(")")));
+				String color = logLine.substring(logLine.lastIndexOf("(") + 1, logLine.lastIndexOf(")"));
+				Color col = new Color(Integer.parseInt(color));
+				shape = new Point(x, y, col);
+				// CmdPointAdd cmd = new CmdPointAdd(model, (Point) shape); cmd.execute();
+			} else if (logLine.contains("Line")) {
+				int xS = Integer.parseInt(logLine.substring(logLine.indexOf("(") + 1, logLine.indexOf(",")));
+				int yS = Integer.parseInt(logLine.substring(logLine.indexOf(",") + 2, logLine.indexOf(")")));
+				int xE = Integer.parseInt(logLine.substring(logLine.indexOf(";") + 3, logLine.lastIndexOf(",")));
+				int yE = Integer.parseInt(logLine.substring(logLine.lastIndexOf(",") + 2, logLine.lastIndexOf(")")));
+				String color = logLine.substring(logLine.indexOf("{") + 1, logLine.indexOf("}"));
+				Color col = new Color(Integer.parseInt(color));
+				shape = new Line(new Point(xS, yS), new Point(xE, yE), col);
+				// CmdLineAdd cmd = new CmdLineAdd(model, (Line) shape); cmd.execute();
+			} else if (logLine.contains("Rectangle")) {
+				int x = Integer.parseInt(logLine.substring(logLine.indexOf("(") + 1, logLine.indexOf(",")));
+				int y = Integer.parseInt(logLine.substring(logLine.indexOf(",") + 2, logLine.indexOf(")")));
+				int h = Integer.parseInt(logLine.substring(logLine.indexOf("=") + 2, logLine.indexOf(";")));
+				int w = Integer.parseInt(logLine.substring(logLine.lastIndexOf("=") + 2, logLine.lastIndexOf(";")));
+				String insideColor = logLine.substring(logLine.indexOf("{") + 1, logLine.indexOf("}"));
+				String outsideColor = logLine.substring(logLine.lastIndexOf("{") + 1, logLine.lastIndexOf("}"));
+				Color insCol = new Color(Integer.parseInt(insideColor));
+				Color outCol = new Color(Integer.parseInt(outsideColor));
+				shape = new Rectangle(new Point(x, y), h, w, insCol, outCol);
+				// CmdRectangleAdd cmd = new CmdRectangleAdd(model, (Rectangle) shape);
+				// cmd.execute();
+			} else if (logLine.contains("Circle")) {
+				int x = Integer.parseInt(logLine.substring(logLine.indexOf("(") + 1, logLine.indexOf(",")));
+				int y = Integer.parseInt(logLine.substring(logLine.indexOf(",") + 2, logLine.indexOf(")")));
+				int r = Integer.parseInt(logLine.substring(logLine.indexOf("=") + 2, logLine.indexOf(";")));
+				String insideColor = logLine.substring(logLine.indexOf("{") + 1, logLine.indexOf("}"));
+				String outsideColor = logLine.substring(logLine.lastIndexOf("{") + 1, logLine.lastIndexOf("}"));
+				Color insCol = new Color(Integer.parseInt(insideColor));
+				Color outCol = new Color(Integer.parseInt(outsideColor));
+				shape = new Circle(new Point(x, y), r, insCol, outCol);
+				// CmdCircleAdd cmd = new CmdCircleAdd(model, (Circle) shape); cmd.execute();
+			} else if (logLine.contains("Donut")) {
+				int x = Integer.parseInt(logLine.substring(logLine.indexOf("(") + 1, logLine.indexOf(",")));
+				int y = Integer.parseInt(logLine.substring(logLine.indexOf(",") + 2, logLine.indexOf(")")));
+				int outerR = Integer.parseInt(logLine.substring(logLine.indexOf("=") + 2, logLine.indexOf(";")));
+				int innerR = Integer
+						.parseInt(logLine.substring(logLine.lastIndexOf("=") + 2, logLine.lastIndexOf(";")));
+				String insideColor = logLine.substring(logLine.indexOf("{") + 1, logLine.indexOf("}"));
+				String outsideColor = logLine.substring(logLine.lastIndexOf("{") + 1, logLine.lastIndexOf("}"));
+				Color insCol = new Color(Integer.parseInt(insideColor));
+				Color outCol = new Color(Integer.parseInt(outsideColor));
+				try {
+					shape = new Donut(new Point(x, y), outerR, innerR, insCol, outCol);
+					// CmdDonutAdd cmd = new CmdDonutAdd(model, (Donut) shape); cmd.execute();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} else if (logLine.contains("Hexagon")) {
+				int x = Integer.parseInt(logLine.substring(logLine.indexOf("(") + 1, logLine.indexOf(",")));
+				int y = Integer.parseInt(logLine.substring(logLine.indexOf(",") + 2, logLine.indexOf(")")));
+				int r = Integer.parseInt(logLine.substring(logLine.indexOf("=") + 2, logLine.indexOf(";")));
+				String insideColor = logLine.substring(logLine.indexOf("{") + 1, logLine.indexOf("}"));
+				String outsideColor = logLine.substring(logLine.lastIndexOf("{") + 1, logLine.lastIndexOf("}"));
+				Color insCol = new Color(Integer.parseInt(insideColor));
+				Color outCol = new Color(Integer.parseInt(outsideColor));
+				shape = new HexagonAdapter(new Point(x, y), r, insCol, outCol);
+				// CmdHexagonAdd cmd = new CmdHexagonAdd(model, (HexagonAdapter) shape);
+				// cmd.execute();
+			}
+
+			if (logLine.startsWith("Redo")) {
+				// System.out.println(cmdDeque.getUndoDeque().size());
+				redo();
+			} else if (logLine.startsWith("Undo")) {
+				// System.out.println(cmdDeque.getUndoDeque().size());
+				undo();
+				// Ovaj deo je potreban kako bi obezbedili da se nakon ponovnog dodavanja
+				// obrisanog oblika pomocu undo obezbedi i njegova selekcija kada se ponovo
+				// iscrta na panelu!
+				if (cmdDeque.getRedoDeque().peekLast().log().contains("Deleted")) {
+					for (int i = 0; i < model.getShapes().size(); i++) {
+						if (model.getShapes().get(i).equals(shape)) {
+							CmdSelectShape cmd = new CmdSelectShape(model, model.getShapes().get(i));
+							cmd.execute();
+						}
+					}
+				} else if (cmdDeque.getRedoDeque().peekLast().log().contains("Selected")) {
+					for (int i = 0; i < model.getShapes().size(); i++) {
+						if (model.getShapes().get(i).equals(shape)) {
+							CmdDeselectShape cmd = new CmdDeselectShape(model, model.getShapes().get(i));
+							cmd.execute();
+						}
+					}
+				}
+				redoCleaner();
+			} else if (logLine.contains("Added")) {
+				CmdAddShape cmd = new CmdAddShape(model, shape);
+				cmd.execute();
+
+				frame.getTextArea().append(logLine + "\n");
+				cmdDeque.getUndoDeque().offerLast(cmd);
+				redoCleaner();
+			} else if (logLine.contains("Selected")) {
+				for (int i = 0; i < model.getShapes().size(); i++) {
+					if (shape.equals(model.getShapes().get(i))) {
+						shape = model.getShapes().get(i);
+					}
+				}
+				CmdSelectShape cmd = new CmdSelectShape(model, shape);
+				cmd.execute();
+
+				frame.getTextArea().append(logLine + "\n");
+				cmdDeque.getUndoDeque().offerLast(cmd);
+				redoCleaner();
+			} else if (logLine.contains("Deselected")) {
+				for (int i = 0; i < model.getShapes().size(); i++) {
+					if (shape.equals(model.getShapes().get(i))) {
+						shape = model.getShapes().get(i);
+					}
+				}
+				CmdDeselectShape cmd = new CmdDeselectShape(model, shape);
+				cmd.execute();
+
+				frame.getTextArea().append(logLine + "\n");
+				cmdDeque.getUndoDeque().offerLast(cmd);
+				redoCleaner();
+			} else if (logLine.contains("Deleted")) {
+
+				CmdDeleteShapes cmdRemove = new CmdDeleteShapes(model, shape);
+				cmdRemove.execute();
+
+				frame.getTextArea().append(logLine + "\n");
+				cmdDeque.getUndoDeque().offerLast(cmdRemove);
+				redoCleaner();
+			} else if (logLine.contains("Edited")) {
+				if (shape instanceof Point) {
+					Point oldState = (Point) model.getSelectedShapes().get(0);
+					int x = Integer.parseInt(logLine.substring(logLine.indexOf("(") + 1, logLine.indexOf(",")));
+					int y = Integer.parseInt(logLine.substring(logLine.indexOf(",") + 2, logLine.indexOf(")")));
+					String color = logLine.substring(logLine.lastIndexOf("(") + 1, logLine.lastIndexOf(")"));
+					Color col = new Color(Integer.parseInt(color));
+					Point newState = new Point(x, y, col);
+
+					CmdUpdatePoint cmd = new CmdUpdatePoint(oldState, newState);
+					cmd.execute();
+
+					frame.getTextArea().append(logLine + "\n");
+					cmdDeque.getUndoDeque().offerLast(cmd);
+					redoCleaner();
+				} else if (shape instanceof Line) {
+					Line oldState = (Line) model.getSelectedShapes().get(0);
+					int xS = Integer.parseInt(logLine.substring(logLine.indexOf("(") + 1, logLine.indexOf(",")));
+					int yS = Integer.parseInt(logLine.substring(logLine.indexOf(",") + 2, logLine.indexOf(")")));
+					int xE = Integer.parseInt(logLine.substring(logLine.indexOf(";") + 3, logLine.lastIndexOf(",")));
+					int yE = Integer
+							.parseInt(logLine.substring(logLine.lastIndexOf(",") + 2, logLine.lastIndexOf(")")));
+					String color = logLine.substring(logLine.indexOf("{") + 1, logLine.indexOf("}"));
+					Color col = new Color(Integer.parseInt(color));
+					Line newState = new Line(new Point(xS, yS), new Point(xE, yE), col);
+
+					CmdUpdateLine cmd = new CmdUpdateLine(oldState, newState);
+					cmd.execute();
+
+					frame.getTextArea().append(logLine + "\n");
+					cmdDeque.getUndoDeque().offerLast(cmd);
+					redoCleaner();
+				} else if (shape instanceof Rectangle) {
+					Rectangle oldState = (Rectangle) model.getSelectedShapes().get(0);
+					int x = Integer.parseInt(logLine.substring(logLine.indexOf("(") + 1, logLine.indexOf(",")));
+					int y = Integer.parseInt(logLine.substring(logLine.indexOf(",") + 2, logLine.indexOf(")")));
+					int h = Integer.parseInt(logLine.substring(logLine.indexOf("=") + 2, logLine.indexOf(";")));
+					int w = Integer.parseInt(logLine.substring(logLine.lastIndexOf("=") + 2, logLine.lastIndexOf(";")));
+					String insideColor = logLine.substring(logLine.indexOf("{") + 1, logLine.indexOf("}"));
+					String outsideColor = logLine.substring(logLine.lastIndexOf("{") + 1, logLine.lastIndexOf("}"));
+					Color insCol = new Color(Integer.parseInt(insideColor));
+					Color outCol = new Color(Integer.parseInt(outsideColor));
+					Rectangle newState = new Rectangle(new Point(x, y), h, w, insCol, outCol);
+
+					CmdUpdateRectangle cmd = new CmdUpdateRectangle(oldState, newState);
+					cmd.execute();
+
+					frame.getTextArea().append(logLine + "\n");
+					cmdDeque.getUndoDeque().offerLast(cmd);
+					redoCleaner();
+				} else if (shape instanceof Donut) {
+					Donut oldState = (Donut) model.getSelectedShapes().get(0);
+					int x = Integer.parseInt(logLine.substring(logLine.indexOf("(") + 1, logLine.indexOf(",")));
+					int y = Integer.parseInt(logLine.substring(logLine.indexOf(",") + 2, logLine.indexOf(")")));
+					int outerR = Integer.parseInt(logLine.substring(logLine.indexOf("=") + 2, logLine.indexOf(";")));
+					int innerR = Integer
+							.parseInt(logLine.substring(logLine.lastIndexOf("=") + 2, logLine.lastIndexOf(";")));
+					String insideColor = logLine.substring(logLine.indexOf("{") + 1, logLine.indexOf("}"));
+					String outsideColor = logLine.substring(logLine.lastIndexOf("{") + 1, logLine.lastIndexOf("}"));
+					Color insCol = new Color(Integer.parseInt(insideColor));
+					Color outCol = new Color(Integer.parseInt(outsideColor));
+
+					try {
+						Donut newState = new Donut(new Point(x, y), outerR, innerR, insCol, outCol);
+						CmdUpdateDonut cmd = new CmdUpdateDonut(oldState, newState);
+						cmd.execute();
+						System.out.println("Boja" + newState.getEdgeColor());
+
+						frame.getTextArea().append(logLine + "\n");
+						cmdDeque.getUndoDeque().offerLast(cmd);
+						redoCleaner();
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				} else if (shape instanceof Circle) {
+					Circle oldState = (Circle) model.getSelectedShapes().get(0);
+					int x = Integer.parseInt(logLine.substring(logLine.indexOf("(") + 1, logLine.indexOf(",")));
+					int y = Integer.parseInt(logLine.substring(logLine.indexOf(",") + 2, logLine.indexOf(")")));
+					int r = Integer.parseInt(logLine.substring(logLine.indexOf("=") + 2, logLine.indexOf(";")));
+					String insideColor = logLine.substring(logLine.indexOf("{") + 1, logLine.indexOf("}"));
+					String outsideColor = logLine.substring(logLine.lastIndexOf("{") + 1, logLine.lastIndexOf("}"));
+
+					Color insCol = new Color(Integer.parseInt(insideColor));
+					Color outCol = new Color(Integer.parseInt(outsideColor));
+					Circle newState = new Circle(new Point(x, y), r, insCol, outCol);
+
+					CmdUpdateCircle cmd = new CmdUpdateCircle(oldState, newState);
+					cmd.execute();
+
+					frame.getTextArea().append(logLine + "\n");
+					cmdDeque.getUndoDeque().offerLast(cmd);
+					redoCleaner();
+				} else if (shape instanceof HexagonAdapter) {
+					HexagonAdapter oldState = (HexagonAdapter) model.getSelectedShapes().get(0);
+					int x = Integer.parseInt(logLine.substring(logLine.indexOf("(") + 1, logLine.indexOf(",")));
+					int y = Integer.parseInt(logLine.substring(logLine.indexOf(",") + 2, logLine.indexOf(")")));
+					int r = Integer.parseInt(logLine.substring(logLine.indexOf("=") + 2, logLine.indexOf(";")));
+					String insideColor = logLine.substring(logLine.indexOf("{") + 1, logLine.indexOf("}"));
+					String outsideColor = logLine.substring(logLine.lastIndexOf("{") + 1, logLine.lastIndexOf("}"));
+					Color insCol = new Color(Integer.parseInt(insideColor));
+					Color outCol = new Color(Integer.parseInt(outsideColor));
+					HexagonAdapter newState = new HexagonAdapter(new Point(x, y), r, insCol, outCol);
+
+					CmdUpdateHexagon cmd = new CmdUpdateHexagon(oldState, newState);
+					cmd.execute();
+
+					frame.getTextArea().append(logLine + "\n");
+					cmdDeque.getUndoDeque().offerLast(cmd);
+					redoCleaner();
+				}
+			} else if (logLine.contains("Backward for one position")) {
+				CmdToBack cmd = new CmdToBack(shape,model);
+				cmd.execute();
+
+				frame.getTextArea().append(logLine + "\n");
+				cmdDeque.getUndoDeque().offerLast(cmd);
+				redoCleaner();
+			} else if (logLine.contains("Forward for one position")) {
+				CmdToFront cmd = new CmdToFront(shape,model);
+				cmd.execute();
+
+				frame.getTextArea().append(logLine + "\n");
+				cmdDeque.getUndoDeque().offerLast(cmd);
+				redoCleaner();
+			} else if (logLine.contains("Bring to the back")) {
+				CmdBringToBack cmd = new CmdBringToBack(shape,model);
+				cmd.execute();
+
+				frame.getTextArea().append(logLine + "\n");
+				cmdDeque.getUndoDeque().offerLast(cmd);
+				redoCleaner();
+			} else if (logLine.contains("Bring to the front")) {
+				CmdBringToFront cmd = new CmdBringToFront(shape,model);
+				cmd.execute();
+
+				frame.getTextArea().append(logLine + "\n");
+				cmdDeque.getUndoDeque().offerLast(cmd);
+				redoCleaner();
+			}
+			enablingEditAndDeleteButtons();
+
+			frame.getView().repaint();
+			logCounter += 1; // prelazak na sledecu liniju
+
+			if (logCounter == logList.size()) {
+				frame.getBtnExecuteLog().setEnabled(false);
+			}
+		}
+
+	}
+
+	
 	public CmdUndoRedoStack getCmdDeque() {
 		return cmdDeque;
 	}

@@ -22,5 +22,10 @@ public class CmdHexagonRemove implements Command {
 	public void unexecute() {
 		model.add(hexagon);
 	}
+	
+	@Override
+	public String log() {
+		return "Deleted: " + hexagon.toString();
+	}
 
 }

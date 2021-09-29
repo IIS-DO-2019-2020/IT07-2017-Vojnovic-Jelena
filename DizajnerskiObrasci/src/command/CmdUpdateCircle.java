@@ -36,4 +36,8 @@ public class CmdUpdateCircle implements Command {
 		
 	}
 
+	@Override
+	public String log() {
+		return "Edited: " + newState.toString();
+	}
 }

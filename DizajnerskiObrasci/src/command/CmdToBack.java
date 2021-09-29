@@ -30,6 +30,11 @@ public class CmdToBack implements Command {
 		model.addShapeAtIndex(shape, index);
 
 	}
+
+	@Override
+	public String log() {
+		return "Backward for one position: " + shape.toString();
+	}
 	
 
 }

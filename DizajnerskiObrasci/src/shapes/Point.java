@@ -92,6 +92,9 @@ public class Point extends Shape {
 		return point;
 	}
 	
+	public String toString() {
+		return "Point: (" + x + ", " + y + "), color: (" + Integer.toString(getEdgeColor().getRGB()) + ")";
+	}
 	
 	public int getX() {
 		return x;

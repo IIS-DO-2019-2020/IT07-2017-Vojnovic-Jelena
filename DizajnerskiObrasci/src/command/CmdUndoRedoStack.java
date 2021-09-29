@@ -47,5 +47,11 @@ public class CmdUndoRedoStack implements Command {
 		this.redoDeque = redoDeque;
 	}
 
+	@Override
+	public String log() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 }

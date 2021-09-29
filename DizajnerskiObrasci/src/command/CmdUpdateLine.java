@@ -16,6 +16,7 @@ public class CmdUpdateLine implements Command {
 
 	@Override
 	public void execute() {
+		
 		oldState.getStartPoint().setX(newState.getStartPoint().getX());
 		oldState.getStartPoint().setY(newState.getStartPoint().getY());
 		oldState.getEndPoint().setX(newState.getEndPoint().getX());
@@ -23,10 +24,13 @@ public class CmdUpdateLine implements Command {
 		oldState.setEdgeColor(newState.getEdgeColor());
 		oldState.setSelected(newState.isSelected());
 		
+
+		
 	}
 
 	@Override
 	public void unexecute() {
+		
 		oldState.getStartPoint().setX(original.getStartPoint().getX());
 		oldState.getStartPoint().setY(original.getStartPoint().getY());
 		oldState.getEndPoint().setX(original.getEndPoint().getX());
@@ -34,6 +38,11 @@ public class CmdUpdateLine implements Command {
 		oldState.setEdgeColor(original.getEdgeColor());
 		oldState.setSelected(original.isSelected());
 		
+	}
+	
+	@Override
+	public String log() {
+		return "Edited: " + newState.toString();
 	}
 
 }

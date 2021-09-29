@@ -30,4 +30,9 @@ public class CmdBringToBack implements Command {
 		model.addShapeAtIndex(shape, index);
 		
 	}
+
+	@Override
+	public String log() {
+		return "Bring to the back: " + shape.toString();
+	}
 }

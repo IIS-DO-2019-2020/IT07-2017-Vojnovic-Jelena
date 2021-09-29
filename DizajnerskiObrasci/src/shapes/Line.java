@@ -109,6 +109,12 @@ public class Line extends Shape {
 		return line;
 	}
 	
+	
+	public String toString() {
+		return "Line: " + "(" + startPoint.getX() + ", " + startPoint.getY() + "); (" + endPoint.getX() + ", "
+				+ endPoint.getY() + ") " + "color {" + Integer.toString(getEdgeColor().getRGB()) + "}";
+	}
+	
 	public Point getStartPoint() {
 		return startPoint;
 	}

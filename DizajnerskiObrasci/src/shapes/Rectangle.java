@@ -130,6 +130,12 @@ public class Rectangle extends SurfaceShape {
 		return rectangle;
 	}
 	
+	public String toString() {
+		return "Rectangle: (" + upperLeftPoint.getX() + ", " + upperLeftPoint.getY() + "), " + "height = " + height
+				+ "; width = " + width + "; inner color {" + Integer.toString(getInnerColor().getRGB()) + "} "
+				+ "edge color {" + Integer.toString(getEdgeColor().getRGB()) + "}";
+	}
+	
 	
 	public int area() {
 		return width * height;

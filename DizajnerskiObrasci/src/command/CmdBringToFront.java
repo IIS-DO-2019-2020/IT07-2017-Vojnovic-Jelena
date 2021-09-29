@@ -31,4 +31,9 @@ public class CmdBringToFront implements Command {
 		
 	}
 
+	@Override
+	public String log() {
+		return "Bring to the front: " + shape.toString();
+	}
+
 }

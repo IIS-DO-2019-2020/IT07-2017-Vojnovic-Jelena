@@ -22,6 +22,11 @@ public class CmdRectangleRemove implements Command {
 	public void unexecute() {
 		model.add(rectangle);
 	}
+	
+	@Override
+	public String log() {
+		return "Deleted: " + rectangle.toString();
+	}
 
 }
 

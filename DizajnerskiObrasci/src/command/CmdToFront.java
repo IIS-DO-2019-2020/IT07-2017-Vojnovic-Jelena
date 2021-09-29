@@ -29,4 +29,9 @@ public class CmdToFront implements Command {
 		
 	}
 
+	@Override
+	public String log() {
+		return "Forward for one position: " + shape.toString();
+	}
+
 }

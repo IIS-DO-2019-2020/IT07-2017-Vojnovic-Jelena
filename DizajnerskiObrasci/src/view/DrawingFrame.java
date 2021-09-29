@@ -14,6 +14,9 @@ import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -61,6 +64,14 @@ public class DrawingFrame extends JFrame {
 	private JSeparator separator;
 	private JSeparator separator_1;
 	
+	//za log
+	private JMenuBar menuBar;
+	private JMenu menu;
+	private JMenuItem savePainting;
+	private JMenuItem saveLog;
+	private JMenuItem loadPainting;
+	private JMenuItem loadLog;
+	private JButton btnExecuteLog;
 	
 	public DrawingView getView() {
 		return view;
@@ -217,6 +228,17 @@ public class DrawingFrame extends JFrame {
 		toolBar_1.add(separator);
 		
 	//
+		separator = new JSeparator();
+		toolBar_1.add(separator);
+
+		btnExecuteLog = new JButton("Execute Log");
+		btnExecuteLog.setEnabled(false);
+		btnExecuteLog.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				controller.executeLog();
+			}
+		});
+		toolBar_1.add(btnExecuteLog);
 		
 		//TEXT AREA
 		
@@ -385,7 +407,54 @@ public class DrawingFrame extends JFrame {
 		scrollPane.setViewportView(textArea);
 		view.add(scrollPane, BorderLayout.SOUTH);
 		
+		menuBar = new JMenuBar();
+		setJMenuBar(menuBar);
+
+		menu = new JMenu("Working with files");
+		menuBar.add(menu);
+
+		savePainting = new JMenuItem("Save drawing");
+		savePainting.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controller.saveDrawing();
+			}
+		});
+		menu.add(savePainting);
+
+		saveLog = new JMenuItem("Save log");
+		saveLog.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controller.saveLog();
+			}
+		});
+		menu.add(saveLog);
+
+		loadPainting = new JMenuItem("Load drawing");
+		loadPainting.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controller.loadDrawing();
+			}
+		});
+		menu.add(loadPainting);
+
+		loadLog = new JMenuItem("Load log");
+		loadLog.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controller.loadLog();
+			}
+		});
+		menu.add(loadLog);
+		
 	}
+	
 	
 	public JToggleButton getBtnPoint() {
 		return btnPoint;
@@ -460,6 +529,26 @@ public class DrawingFrame extends JFrame {
 	
 	public void setController(DrawingController controller) {
 		this.controller = controller;
+	}
+
+	public JMenuItem getSavePainting() {
+		return savePainting;
+	}
+
+	public JMenuItem getSaveLog() {
+		return saveLog;
+	}
+
+	public JMenuItem getLoadPainting() {
+		return loadPainting;
+	}
+
+	public JMenuItem getLoadLog() {
+		return loadLog;
+	}
+	
+	public JButton getBtnExecuteLog() {
+		return btnExecuteLog;
 	}
 
 

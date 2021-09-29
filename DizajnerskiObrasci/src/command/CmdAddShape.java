@@ -24,4 +24,9 @@ public class CmdAddShape implements Command {
 		
 	}
 
+	@Override
+	public String log() {
+		return "Added: " + shape.toString();
+	}
+
 }

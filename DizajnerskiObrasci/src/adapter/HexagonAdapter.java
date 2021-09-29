@@ -130,4 +130,11 @@ public class HexagonAdapter extends SurfaceShape {
 		hexagon.setSelected(isSelected());
 				return hexagon;
 	}
+	
+	public String toString() {
+		return "Hexagon: Center (" + hexagon.getX() + ", " + hexagon.getY() + ") radius = " + hexagon.getR()
+				+ "; inner color {" + Integer.toString(hexagon.getAreaColor().getRGB()) + "} edge color {"
+				+ Integer.toString(hexagon.getBorderColor().getRGB()) + "}";
+
+	}
 }

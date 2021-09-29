@@ -22,5 +22,9 @@ public class CmdLineRemove implements Command {
 		model.add(line);
 	}
 
+	@Override
+	public String log() {
+		return "Deleted: " + line.toString();
+	}
 
 }

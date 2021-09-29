@@ -35,5 +35,11 @@ public class CmdUpdateHexagon implements Command {
 		oldState.setSelected(original.isSelected());
 		
 	}
+	
+	@Override
+	public String log() {
+		return "Edited: " + newState.toString();
+	}
+
 
 }

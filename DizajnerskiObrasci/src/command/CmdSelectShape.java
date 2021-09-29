@@ -26,6 +26,11 @@ public class CmdSelectShape implements Command {
 		shape.setSelected(false);
 		model.getSelectedShapes().remove(shape);
 	}
+	
+	@Override
+	public String log() {
+		return "Selected shape: " + shape.toString();
+	}
 
 }
 

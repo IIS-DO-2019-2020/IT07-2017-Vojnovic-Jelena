@@ -26,5 +26,9 @@ public class CmdDeselectShape implements Command {
 		model.getSelectedShapes().add(shape);
 	}
 
+	@Override
+	public String log() {
+		return "Deselected shape: " + shape.toString();
+	}
 
 }

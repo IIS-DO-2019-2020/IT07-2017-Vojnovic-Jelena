@@ -22,6 +22,11 @@ public class CmdDonutRemove implements Command {
 		model.add(donut);
 	}
 
+	@Override
+	public String log() {
+		return "Deleted: " + donut.toString();
+	}
+
 
 }
 

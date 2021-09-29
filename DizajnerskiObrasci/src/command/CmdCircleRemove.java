@@ -22,6 +22,11 @@ public class CmdCircleRemove implements Command {
 	public void unexecute() {
 		model.add(circle);
 	}
+	
+	@Override
+	public String log() {
+		return "Deleted: " + circle.toString();
+	}
 
 }
 
