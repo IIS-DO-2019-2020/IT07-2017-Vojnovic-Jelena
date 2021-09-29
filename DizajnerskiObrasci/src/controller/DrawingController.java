@@ -68,6 +68,8 @@ public class DrawingController {
 	private DrawingModel model;
 	private DrawingFrame frame;
 	
+	/////
+	private Point firstPoint;
 	
 	private DlgPoint dlgPoint = new DlgPoint();
 	private DlgLine dlgLine = new DlgLine();
@@ -155,25 +157,44 @@ public class DrawingController {
 				
 			//LINE
 			} else if(frame.getBtnLine().isSelected()) {
-			
+				
 				if(lineWaitingForSecondPoint) {
-					Line line = new Line(lineFirstPoint, mouseClick, dlgLine.getCol());
-					CmdAddShape cmd = new CmdAddShape(model, line);
-					cmdDeque.getUndoDeque().offerLast(cmd);
-					cmd.execute();
-					frame.getBtnUndo().setEnabled(true);
-					frame.getBtnRedo().setEnabled(false);
-					frame.getTextArea().append(cmd.log() + "\n");
-					frame.getBtnEdgeColor().setBackground(line.getEdgeColor());
 					
-					lineWaitingForSecondPoint=false;
-					frame.getView().repaint();
-					return;
+					dlgLine.setTxtStartPointXEdt(false);
+					dlgLine.setTxtStartPointYEdt(false);
+					dlgLine.setTxtEndPointXEdt(false);
+					dlgLine.setTxtEndPointYEdt(false);
+					dlgLine.setTxtStartPointX(Integer.toString(lineFirstPoint.getX()));
+					dlgLine.setTxtStartPointY(Integer.toString(lineFirstPoint.getY()));
+					dlgLine.setTxtEndPointX(Integer.toString(mouseClick.getX()));
+					dlgLine.setTxtEndPointY(Integer.toString(mouseClick.getY()));
+					dlgLine.setCol(frame.getBtnEdgeColor().getBackground());
+					// dialogLine.pack();
+					dlgLine.setVisible(true);
 					
+					if (dlgLine.isOk()) {
+						Line l = new Line(lineFirstPoint, mouseClick, dlgLine.getCol());
+						CmdAddShape cmd = new CmdAddShape(model, l);
+						cmdDeque.getUndoDeque().offerLast(cmd);
+						cmd.execute();
+						cmdDeque.getUndoDeque().offerLast(cmd);
+						frame.getBtnUndo().setEnabled(true);
+						frame.getBtnRedo().setEnabled(false);
+						frame.getTextArea().append(cmd.log() + "\n");
+						frame.getBtnEdgeColor().setBackground(l.getEdgeColor());
+						frame.getView().repaint();
+						
+						lineWaitingForSecondPoint=false;
+						
+						return;
 				}
+				
+			}
+				
 				lineFirstPoint = mouseClick;
 				lineWaitingForSecondPoint = true;
 				return;
+			
 				
 			} else if(frame.getBtnRectangle().isSelected()) {
 				DlgRectangle dlgRectangle = new DlgRectangle();
